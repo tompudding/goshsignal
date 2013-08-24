@@ -99,7 +99,7 @@ class Actor(object):
 class Player(Actor):
     texture = 'player'
     width = 9
-    height = 13
+    height = 16
 
     # def AdjacentItem(self,item_type):
     #     current_tiles = set((self.pos + corner).to_int() for corner in self.corners)
