@@ -1,7 +1,9 @@
 resource/sprites/grass.png:tiles_atlas_0.png:0:496:16:16
-resource/sprites/player_back.png:tiles_atlas_0.png:16:499:9:13
-resource/sprites/player_front.png:tiles_atlas_0.png:25:499:9:13
-resource/sprites/player_left.png:tiles_atlas_0.png:34:499:9:13
-resource/sprites/player_right.png:tiles_atlas_0.png:43:499:9:13
-resource/sprites/tile.png:tiles_atlas_0.png:0:480:16:16
-resource/sprites/wall.png:tiles_atlas_0.png:16:480:16:16
+resource/sprites/marking.png:tiles_atlas_0.png:16:496:16:16
+resource/sprites/player_back.png:tiles_atlas_0.png:32:499:9:13
+resource/sprites/player_front.png:tiles_atlas_0.png:41:499:9:13
+resource/sprites/player_left.png:tiles_atlas_0.png:50:499:9:13
+resource/sprites/player_right.png:tiles_atlas_0.png:59:499:9:13
+resource/sprites/road.png:tiles_atlas_0.png:0:480:16:16
+resource/sprites/tile.png:tiles_atlas_0.png:16:480:16:16
+resource/sprites/wall.png:tiles_atlas_0.png:32:480:16:16

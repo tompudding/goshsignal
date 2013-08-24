@@ -108,6 +108,8 @@ class TileTypes:
     DOOR_OPEN         = 4
     TILE              = 5
     PLAYER            = 6
+    ROAD              = 7
+    ROAD_MARKING      = 8
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN))
     Computers  = set()
@@ -115,6 +117,8 @@ class TileTypes:
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
+                     TileTypes.ROAD          : 'road.png',
+                     TileTypes.ROAD_MARKING  : 'marking.png',
                      TileTypes.WALL          : 'wall.png',
                      TileTypes.DOOR_CLOSED   : 'door_closed.png',
                      TileTypes.DOOR_OPEN     : 'door_open.png',
@@ -155,9 +159,11 @@ class GameMap(object):
                      '|' : TileTypes.WALL,
                      '-' : TileTypes.WALL,
                      '+' : TileTypes.WALL,
+                     'r' : TileTypes.ROAD,
+                     'm' : TileTypes.ROAD_MARKING,
                      'p' : TileTypes.PLAYER,}
     def __init__(self,name):
-        self.size   = Point(70,70)
+        self.size   = Point(120,84)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]
         self.actors = []
         self.doors  = []
@@ -191,7 +197,7 @@ class GameView(ui.RootElement):
         self.atlas = globals.atlas = drawing.texture.TextureAtlas('tiles_atlas_0.png','tiles_atlas.txt')
         self.map = GameMap('level1.txt')
         self.map.world_size = self.map.size * globals.tile_dimensions
-        self.viewpos = Viewpos(Point(0,0))
+        self.viewpos = Viewpos(Point(915,0))
         self.player_direction = Point(0,0)   
         self.game_over = False
         #pygame.mixer.music.load('music.ogg')
@@ -217,6 +223,7 @@ class GameView(ui.RootElement):
         drawing.DrawAll(globals.nonstatic_text_buffer,globals.text_manager.atlas.texture.texture)
         
     def Update(self,t):
+        #print self.viewpos.pos
         if self.mode:
             self.mode.Update(t)
 
