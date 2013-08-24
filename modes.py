@@ -180,7 +180,15 @@ class GameMode(Mode):
         #if self.parent.computer:
         #    return self.parent.computer.KeyUp(key)
 
-        elif 0 and key == pygame.K_SPACE:
+        elif key == pygame.K_SPACE:
+            facing = self.parent.map.player.Facing()
+            print self.parent.map.player.pos,self.parent.map.player.Facing()
+            try:
+                tile = self.parent.map.data[facing.x][facing.y]
+            except IndexError:
+                return
+            tile.Interact()
+            return
             computer = self.parent.map.player.AdjacentComputer()
             if computer:
                 self.parent.text.Disable()

@@ -12,6 +12,7 @@ class Directions:
     RIGHT = 2
     LEFT  = 3
 
+
 class Actor(object):
     texture = None
     width = None
@@ -23,6 +24,10 @@ class Actor(object):
                       (Directions.DOWN ,'front'),
                       (Directions.LEFT ,'left' ),
                       (Directions.RIGHT,'right'))
+        self.dirs_pos = {Directions.UP    : Point(0,1),
+                         Directions.DOWN  : Point(0,-1),
+                         Directions.LEFT  : Point(-1,0),
+                         Directions.RIGHT : Point(1,0)}
         self.dirs = {}
         for dir,name in self.dirsa:
             try:
@@ -45,6 +50,10 @@ class Actor(object):
         bl = bl.to_int()
         tr = tr.to_int()
         self.quad.SetVertices(bl,tr,1)
+    
+    def Facing(self):
+        facing = self.pos + (self.size/2) + self.dirs_pos[self.dir]
+        return facing.to_int()
 
     def Move(self,amount):
         amount = Point(amount.x,amount.y)

@@ -159,6 +159,8 @@ class TileData(object):
         self.quad.SetVertices(bl,tr,0)
     def Delete(self):
         self.quad.Delete()
+    def Interact(self):
+        pass
 
 class Door(TileData):
     def __init__(self,type,pos):
@@ -170,6 +172,9 @@ class Door(TileData):
         else:
             self.type = TileTypes.DOOR_CLOSED
         self.quad.SetTextureCoordinates(globals.atlas.TextureSpriteCoords(self.texture_names[self.type]))
+
+    def Interact(self):
+        self.Toggle()
 
 def TileDataFactory(map,type,pos):
     if type in TileTypes.Doors:
