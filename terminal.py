@@ -89,6 +89,14 @@ class Emulator(ui.UIElement):
         #print 'Got command : ',command
         pass
 
+    def AddText(self,text):
+        for char in text:
+            if char == '\n':
+                key = pygame.K_RETURN
+            else:
+                key = ord(char)
+            self.AddKey(key,False)
+
     def AddMessage(self,message,fail = None):
         if fail == True:
             globals.sounds.access_denied.play()
@@ -190,6 +198,24 @@ class Emulator(ui.UIElement):
 
 class BashComputer(Emulator):
     Banner = 'hi\n$'
+    def __init__(self,parent,gameview,computer,background,foreground):
+        self.commands = {'ls' : self.ls}
+        super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
     def Dispatch(self,message):
-        print message
+        self.Handle(message)
         self.AddKey(ord('$'),True)
+
+    def Handle(self,message):
+        parts = message.split(' ')
+        try:
+            command = self.commands[parts[0]]
+        except KeyError:
+            self.AddText('%s : command not found\n' % parts[0])
+            return
+        output = command(parts[1:])
+        self.AddText(output)
+        
+    def ls(self,args):
+        print args
+        return '\n'.join('abcd') + '\n'
+        
