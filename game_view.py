@@ -34,7 +34,7 @@ class Viewpos(object):
         self.follow        = None
         self.follow_start  = 0
         self.follow_locked = False
-        self.target        = point
+        self.target        = point.to_int()
         self.target_change = self.target - self.pos
         self.start_point   = self.pos
         self.start_time    = t
@@ -75,16 +75,22 @@ class Viewpos(object):
         self.t = t
         if self.follow:
             #We haven't locked onto it yet, so move closer, and lock on if it's below the threshold
-            fpos = self.follow.GetPos()*globals.tile_dimensions
+            fpos = (self.follow.GetPos()*globals.tile_dimensions).to_int()
             if not fpos:
                 return
-            target = fpos - globals.screen*0.5
+            target = fpos - (globals.screen*0.5).to_int()
             diff = target - self.pos
             #print diff.SquareLength(),self.follow_threshold
+            direction = diff.direction()
+            
             if abs(diff.x) < self.max_away.x and abs(diff.y) < self.max_away.y:
-                self.pos += diff*0.02
-                return
-            self.pos += diff*0.03
+                adjust = diff*0.02
+            else:
+                adjust = diff*0.03
+            #adjust = adjust.to_int()
+            if adjust.x == 0 and adjust.y == 0:
+                adjust = direction
+            self.pos += adjust
             return
                 
         elif self.target:
@@ -102,27 +108,30 @@ class Viewpos(object):
                 self.pos = (self.start_point + (self.target_change*partial)).to_int()
 
 class TileTypes:
-    GRASS             = 1
-    WALL              = 2
-    DOOR_CLOSED       = 3
-    DOOR_OPEN         = 4
-    TILE              = 5
-    PLAYER            = 6
-    ROAD              = 7
-    ROAD_MARKING      = 8
-    CHAINLINK         = 9
-    JODRELL_SIGN      = 10
-    BARRIER           = 11
-    CAR               = 12
+    GRASS              = 1
+    WALL               = 2
+    DOOR_CLOSED        = 3
+    DOOR_OPEN          = 4
+    TILE               = 5
+    PLAYER             = 6
+    ROAD               = 7
+    ROAD_MARKING       = 8
+    CHAINLINK          = 9
+    JODRELL_SIGN       = 10
+    BARRIER            = 11
+    CAR                = 12
+    ROAD_MARKING_HORIZ = 13
+    DISH               = 14
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN))
     Computers  = set()
-    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR)) | Computers
+    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR,DISH)) | Computers
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
                      TileTypes.ROAD          : 'road.png',
                      TileTypes.ROAD_MARKING  : 'marking.png',
+                     TileTypes.ROAD_MARKING_HORIZ : 'marking1.png',
                      TileTypes.WALL          : 'wall.png',
                      TileTypes.PLAYER        : 'road.png',
                      TileTypes.DOOR_CLOSED   : 'door_closed.png',
@@ -131,7 +140,8 @@ class TileData(object):
                      TileTypes.JODRELL_SIGN  : 'sign.png',
                      TileTypes.CHAINLINK     : 'chain.png',
                      TileTypes.BARRIER       : 'barrier.png',
-                     TileTypes.CAR           : 'car.png'
+                     TileTypes.CAR           : 'car.png',
+                     TileTypes.DISH          : 'dish.png',
                      }
     
     def __init__(self,type,pos):
@@ -174,14 +184,18 @@ class GameMap(object):
                      '-' : TileTypes.WALL,
                      '+' : TileTypes.WALL,
                      'r' : TileTypes.ROAD,
+                     'd' : TileTypes.DOOR_CLOSED,
+                     'o' : TileTypes.DOOR_OPEN,
                      'm' : TileTypes.ROAD_MARKING,
+                     'M' : TileTypes.ROAD_MARKING_HORIZ,
                      'c' : TileTypes.CHAINLINK,
                      's' : TileTypes.JODRELL_SIGN,
                      'p' : TileTypes.PLAYER,
                      'v' : TileTypes.CAR,
+                     'D' : TileTypes.DISH,
                      'b' : TileTypes.BARRIER,}
     def __init__(self,name):
-        self.size   = Point(120,81)
+        self.size   = Point(124,76)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]
         self.actors = []
         self.doors  = []

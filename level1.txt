@@ -1,74 +1,69 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                                       rrrrrrr
+                                     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+                                     c                                                                                c
+     +--------------------------------d+                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|                                                                              c
+     |.................................|    D                                                                         c
+     |.................................|                                                                              c
+     +----------------------------d----+                                                                              c
+                                     cccccccccccccccccccccccccccccccccccccc ccccccccccccccccccccccccccccccccccccccccccc
+
+
+                                   +---------------------------------+         +---------------------------------------+
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   |.................................|         |.......................................|
+                                   +----------------------------d----+         +---d-----------------------------------+
+
+    rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    rrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrM
+    rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
                                                                        rrrmrrr
-                                                                       rrrrrrr
-                                                                       rrrmrrr
-                                                                       rrrrrrr
-                                                                       rrrmrrr
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccsccccb     rcccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccsccccb     rcccccccccccccccccccccccccccccccccccccccccccccc
                                                                 c      rrrmrrr      c
                                                                 c      rrrrrrr      c
                                                                 c      rrrmrrr      c
