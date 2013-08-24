@@ -37,7 +37,7 @@
      |.................................|                                                                              c
      |.................................|    D                                                                         c
      |.................................|                                                                              c
-     +----------------------------d----+                                                                              c
+     +----------------------------L----+                                                                              c
                                      cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
@@ -55,7 +55,7 @@
                                    |l.l.l.l.l.l.l.l.l.l.l.l.l.l.+d+..|         |....................................| 
                                    |..............................|..|         |....................................| 
                                    |l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.|..|         |w...w...w...w...w...w...w...w...w...| 
-                                   +----------------------------d-+--+         +---d--------------------------------+ 
+                                   +----------------------------L-+--+         +---d--------------------------------+ 
                                                                               
     rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrprrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
     rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr

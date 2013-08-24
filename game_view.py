@@ -125,8 +125,9 @@ class TileTypes:
     WOOD               = 15
     BATHROOM_TILE      = 16
     LAB_TILE           = 17
+    DOOR_LOCKED        = 18
 
-    Doors      = set((DOOR_CLOSED,DOOR_OPEN))
+    Doors      = set((DOOR_CLOSED,DOOR_OPEN,DOOR_LOCKED))
     Computers  = set()
     Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR,DISH)) | Computers
 
@@ -170,7 +171,13 @@ class TileData(object):
 
 class Door(TileData):
     def __init__(self,type,pos):
+        if type == TileTypes.DOOR_LOCKED:
+            self.locked = True
+            type = TileTypes.DOOR_CLOSED
+        else:
+            self.locked = False
         super(Door,self).__init__(type,pos)
+
         
     def Toggle(self):
         if self.type == TileTypes.DOOR_CLOSED:
@@ -180,7 +187,11 @@ class Door(TileData):
         self.quad.SetTextureCoordinates(globals.atlas.TextureSpriteCoords(self.texture_names[self.type]))
 
     def Interact(self):
-        self.Toggle()
+        if not self.locked:
+            self.Toggle()
+        else:
+            #play locked sound or what have you
+            print 'locked!'
 
 def TileDataFactory(map,type,pos):
     if type in TileTypes.Doors:
@@ -196,6 +207,7 @@ class GameMap(object):
                      '+' : TileTypes.WALL,
                      'r' : TileTypes.ROAD,
                      'd' : TileTypes.DOOR_CLOSED,
+                     'L' : TileTypes.DOOR_LOCKED,
                      'o' : TileTypes.DOOR_OPEN,
                      'm' : TileTypes.ROAD_MARKING,
                      'M' : TileTypes.ROAD_MARKING_HORIZ,
