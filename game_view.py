@@ -6,6 +6,7 @@ from globals.types import Point
 import modes
 import random
 import actors
+import terminal
 
 class Viewpos(object):
     follow_threshold = 0
@@ -171,12 +172,14 @@ class ObjectTypes:
     DISH     = 3
     LOCKER   = 4
     CAR      = 5
+    COMPUTER = 6
 
 class GameObject(object):
     texture_names = {ObjectTypes.BED_UP   : ('bedup.png'   , Point(0,0)),
                      ObjectTypes.BED_DOWN : ('beddown.png' , Point(0,0)),
                      ObjectTypes.CAR      : ('car.png'     , Point(0,0)),
-                     ObjectTypes.DISH     : ('dish.png'    , Point(0,0))}
+                     ObjectTypes.DISH     : ('dish.png'    , Point(0,0)),
+                     ObjectTypes.COMPUTER : ('computer.png', Point(0,0))}
     def __init__(self,pos):
         self.name,self.offset = self.texture_names[self.type]
         self.pos = pos + self.offset
@@ -221,6 +224,78 @@ class Car(GameObject):
     type = ObjectTypes.CAR
     def Interact(self,player):
         print 'can\'t leave yet'
+
+class Computer(GameObject):
+    key_repeat_time = 40
+    initial_key_repeat = 300
+    type = ObjectTypes.COMPUTER
+    def __init__(self,pos,terminal_type,parent):
+        super(Computer,self).__init__(pos)
+        self.terminal = None
+        self.parent = parent
+        self.terminal_type = terminal_type
+        bl = Point(0,0.45) + (Point(6,6).to_float()/globals.screen)
+        tr = Point(1,1) - (Point(6,6).to_float()/globals.screen)
+        self.screen = ui.Box(parent = globals.screen_root,
+                             pos = Point(0,0),
+                             tr = Point(1,1),
+                             colour = drawing.constants.colours.black)
+        self.screen.Disable()
+
+    def SetScreen(self):
+        #globals.sounds.terminal_on.play()
+        if self.terminal == None:
+            self.terminal = self.terminal_type(parent     = self.screen,
+                                               gameview   = self.parent,
+                                               computer   = self,
+                                               background = drawing.constants.colours.black,
+                                               foreground = drawing.constants.colours.green)
+        #else:
+        #    self.terminal.Enable()
+        self.current_key = None
+
+    def Interact(self,player):
+        self.screen.Enable()
+        self.SetScreen()
+        self.parent.computer = self
+
+    def KeyDown(self,key):
+        if key in (pygame.K_ESCAPE,):
+            return
+        if key >= pygame.K_KP0 and key <= pygame.K_KP9:
+            key -= (pygame.K_KP0 - pygame.K_0)
+
+        self.current_key = key
+        if key == pygame.K_TAB:
+            return
+        self.last_keyrepeat = None
+        self.terminal.AddKey(key)
+
+    def KeyUp(self,key):
+        if key == pygame.K_ESCAPE:
+            self.screen.Disable()
+            self.parent.CloseScreen()
+            if self.terminal.GameOver():
+                self.parent.GameOver()
+        if self.current_key:
+            self.current_key = None
+
+    def Update(self,t):
+        self.terminal.Update(t)
+        if not self.current_key:
+            return
+        elif self.current_key == pygame.K_TAB:
+            self.terminal.ToggleMode()
+            self.current_key = None
+            return
+        if self.last_keyrepeat == None:
+            self.last_keyrepeat = t+self.initial_key_repeat
+            return
+        if t - self.last_keyrepeat > self.key_repeat_time:
+            self.terminal.AddKey(self.current_key,repeat=True)
+            self.last_keyrepeat = t
+
+    
 
 class Door(TileData):
     def __init__(self,type,pos):
@@ -270,7 +345,7 @@ class GameMap(object):
                      't' : TileTypes.BATHROOM_TILE,
                      'b' : TileTypes.BARRIER,
                      'l' : TileTypes.LAB_TILE}
-    def __init__(self,name):
+    def __init__(self,name,parent):
         self.size   = Point(124,76)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]
         self.object_cache = {}
@@ -278,6 +353,7 @@ class GameMap(object):
         self.actors = []
         self.doors  = []
         self.player = None
+        self.parent = parent
         y = self.size.y - 1
         with open(name) as f:
             for line in f:
@@ -312,6 +388,7 @@ class GameMap(object):
         self.AddObject(Dish(Point(44,38)))
         self.AddObject(Bed(Point(86,21)))
         self.AddObject(Car(Point(73,2)))
+        self.AddObject(Computer(Point(94,21),terminal.BashComputer,self.parent))
 
     def AddObject(self,obj):
         self.object_list.append(obj)
@@ -323,11 +400,12 @@ class GameMap(object):
 class GameView(ui.RootElement):
     def __init__(self):
         self.atlas = globals.atlas = drawing.texture.TextureAtlas('tiles_atlas_0.png','tiles_atlas.txt')
-        self.map = GameMap('level1.txt')
+        self.map = GameMap('level1.txt',self)
         self.map.world_size = self.map.size * globals.tile_dimensions
         self.viewpos = Viewpos(Point(915,0))
         self.player_direction = Point(0,0)   
         self.game_over = False
+        self.computer = None
         #pygame.mixer.music.load('music.ogg')
         self.music_playing = False
         super(GameView,self).__init__(Point(0,0),globals.screen)
@@ -352,11 +430,15 @@ class GameView(ui.RootElement):
         
     def Update(self,t):
         #print self.viewpos.pos
+        
         if self.mode:
             self.mode.Update(t)
 
         if self.game_over:
             return
+
+        if self.computer:
+            return self.computer.Update(t)
             
         self.t = t
         self.viewpos.Update(t)
@@ -381,3 +463,5 @@ class GameView(ui.RootElement):
     def KeyUp(self,key):
         self.mode.KeyUp(key)
 
+    def CloseScreen(self):
+        self.computer = None

@@ -4,11 +4,12 @@ resource/sprites/beddown.png:tiles_atlas_0.png:0:960.0:39:48
 resource/sprites/bedup.png:tiles_atlas_0.png:39:960.0:39:48
 resource/sprites/car.png:tiles_atlas_0.png:78:991.0:25:17
 resource/sprites/chain.png:tiles_atlas_0.png:112:1008.0:16:16
-resource/sprites/dish.png:tiles_atlas_0.png:0:459.0:527:501
+resource/sprites/computer.png:tiles_atlas_0.png:0:928.0:32:32
+resource/sprites/dish.png:tiles_atlas_0.png:0:427.0:527:501
 resource/sprites/door_closed.png:tiles_atlas_0.png:128:1008.0:16:16
 resource/sprites/door_open.png:tiles_atlas_0.png:144:1008.0:16:16
 resource/sprites/grass.png:tiles_atlas_0.png:160:1008.0:16:16
-resource/sprites/labtile.png:tiles_atlas_0.png:527:928.0:32:32
+resource/sprites/labtile.png:tiles_atlas_0.png:32:928.0:32:32
 resource/sprites/marking.png:tiles_atlas_0.png:176:1008.0:16:16
 resource/sprites/marking1.png:tiles_atlas_0.png:192:1008.0:16:16
 resource/sprites/player_back.png:tiles_atlas_0.png:208:1008.0:9:16

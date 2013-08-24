@@ -167,8 +167,8 @@ class GameMode(Mode):
         self.keydownmap = 0
 
     def KeyDown(self,key):
-        #if self.parent.computer:
-        #    return self.parent.computer.KeyDown(key)
+        if self.parent.computer:
+            return self.parent.computer.KeyDown(key)
         if key in self.direction_amounts:
             self.keydownmap |= self.keyflags[key]
             self.parent.player_direction += self.direction_amounts[key]
@@ -177,31 +177,22 @@ class GameMode(Mode):
         if key in self.direction_amounts and (self.keydownmap & self.keyflags[key]):
             self.keydownmap &= (~self.keyflags[key])
             self.parent.player_direction -= self.direction_amounts[key]
-        #if self.parent.computer:
-        #    return self.parent.computer.KeyUp(key)
+        if self.parent.computer:
+            return self.parent.computer.KeyUp(key)
 
         elif key == pygame.K_SPACE:
             facing = self.parent.map.player.Facing()
-            print facing
             if not facing:
                 return
+            if (facing.x,facing.y) in self.parent.map.object_cache:
+                obj = self.parent.map.object_cache[(facing.x,facing.y)]
+                obj.Interact(self.parent.map.player)
+                return
+
             try:
                 tile = self.parent.map.data[facing.x][facing.y]
             except IndexError:
                 return
             tile.Interact(self.parent.map.player)
-            return
-            computer = self.parent.map.player.AdjacentComputer()
-            if computer:
-                self.parent.text.Disable()
-                computer.screen.Enable()
-                computer.SetScreen(self.parent)
-                self.parent.computer = computer
-            switch = self.parent.map.player.AdjacentSwitch()
-            if switch:
-                switch.Toggle()
-            actor = self.parent.map.player.AdjacentActor()
-            if actor:
-                actor.Converse()
 
                 
