@@ -13,7 +13,6 @@ class Path(object):
         escaped = False
         current = []
         for i,char in enumerate(path):
-            print escaped,current,i,char
             if char == '\0':
                 break
             if escaped:
@@ -53,7 +52,6 @@ class Path(object):
         if self.parts == []:
             self.parts = ['/']
             self.filename = '/'
-        print self.parts,path
         self.parts = tuple(self.parts)
 
     def Add(self,extra):
@@ -62,11 +60,19 @@ class Path(object):
     def __hash__(self):
         return hash(self.parts)
 
+    def format(self):
+        if self.parts == ('/',):
+            return '/'
+        return '/' + '/'.join(self.parts)
+
 class File(object):
     def __init__(self,path,data):
         self.path = path
         self.data = data
         self.filename = self.path.filename
+
+    def lsformat(self):
+        return '%5d  %s' % (len(self.data),self.filename)
 
 class Directory(File):
     def __init__(self,path):
@@ -82,6 +88,9 @@ class Directory(File):
 
     def AddFile(self,f):
         self.files.append(f)
+
+    def lsformat(self):
+        return '<dir>  %s' % self.filename
 
 class FileSystemException(Exception):
     pass
@@ -112,7 +121,6 @@ class FileSystem(object):
                     bad = True
                 if not f:
                     f = Directory(current_dir.path.Add(part))
-                    print 'b',current_dir,f
                     current_dir.AddFile(f)
                 current_dir = f
             if bad:
@@ -123,11 +131,9 @@ class FileSystem(object):
                 new_file = File(path,data)
             current_dir.AddFile(new_file)
         d = self.root
-        print 'a',d.path.parts,[f.path.parts for f in d.files]
 
     def GetFile(self,path):
         current_dir = self.root
-        print 'x',path.parts
         if len(path.parts) == 1 and path.filename == '/':
             return self.root
         for part in path.parts[:-1]:
@@ -221,7 +227,6 @@ class Emulator(ui.UIElement):
                 self.quads[x][y].Enable()
 
     def Dispatch(self,command):
-        #print 'Got command : ',command
         pass
 
     def AddText(self,text):
@@ -360,9 +365,13 @@ class BashComputer(Emulator):
         except NoSuchFile:
             return 'NoSuchFile\n'
 
-        #if isinstance(file,Directory):
-            
-        return '\n'.join('abcd') + '\n'
+        if isinstance(file,Directory):
+            out = ['%s:' % file.path.format()]
+            for f in file.files:
+                out.append(f.lsformat())
+            return '\n'.join(out) + '\n'
+        else:
+            return file.lsformat() + '\n'
         
 class DomsComputer(BashComputer):
     Banner = 'This is Dom\'s private diary computer : keep your nose out!\n$'
