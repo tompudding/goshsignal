@@ -57,6 +57,9 @@ class Path(object):
     def Add(self,extra):
         return Path('/' + '/'.join(self.parts + (extra,)))
 
+    def Extend(self,path):
+        return Path('/' + '/'.join(self.parts + path.parts))
+
     def __hash__(self):
         return hash(self.parts)
 
@@ -338,14 +341,17 @@ class Emulator(ui.UIElement):
 
 class BashComputer(Emulator):
     def __init__(self,parent,gameview,computer,background,foreground):
-        self.commands = {'ls' : self.ls}
+        self.commands = {'ls' : self.ls,
+                         'cd' : self.cd,
+                         'pwd' : self.pwd}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
+        self.cwd = Path('/')
     def Dispatch(self,message):
         self.Handle(message)
         self.AddKey(ord('$'),True)
 
     def Handle(self,message):
-        parts = message.split(' ')
+        parts = message.strip().split(' ')
         try:
             command = self.commands[parts[0]]
         except KeyError:
@@ -357,7 +363,10 @@ class BashComputer(Emulator):
     def ls(self,args):
         #ignore any switched
         args = [arg for arg in args if arg[0] != '-']
-        path = Path(args[0])
+        if len(args) == 0:
+            path = self.cwd
+        else:
+            path = Path(args[0])
         try:
             file = self.FileSystem.GetFile(path)
         except InvalidPath:
@@ -372,9 +381,29 @@ class BashComputer(Emulator):
             return '\n'.join(out) + '\n'
         else:
             return file.lsformat() + '\n'
+
+    def cd(self,args):
+        print args
+        args = [arg for arg in args if arg[0] != '-']
+        if len(args) == 0:
+            path = self.home_path
+            return '\n'
+        if args[0] == '/':
+            #absolute
+            self.cwd = Path(args[0])
+        else:
+            try:
+                self.cwd = self.cwd.Extend(Path(args[0]))
+            except NameError:
+                return 'invalid path for cd\n'
+        return '\n'
+
+    def pwd(self,args):
+        return self.cwd.format() + '\n'
         
 class DomsComputer(BashComputer):
     Banner = 'This is Dom\'s private diary computer : keep your nose out!\n$'
+    home_path = Path('/home/dom')
     FileSystem = FileSystem({'/home/dom/edit_diary':'edit_diary',
                              '/usr/share'          : None,
                              '/tmp'                : None,
