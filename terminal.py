@@ -341,9 +341,11 @@ class Emulator(ui.UIElement):
 
 class BashComputer(Emulator):
     def __init__(self,parent,gameview,computer,background,foreground):
-        self.commands = {'ls' : self.ls,
-                         'cd' : self.cd,
-                         'pwd' : self.pwd}
+        self.commands = {'ls'   : self.ls,
+                         'cd'   : self.cd,
+                         'pwd'  : self.pwd,
+                         'cat'  : self.cat,
+                         'file' : self.file}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
         self.cwd = Path('/')
     def Dispatch(self,message):
@@ -359,10 +361,11 @@ class BashComputer(Emulator):
             return
         output = command(parts[1:])
         self.AddText(output)
-        
+
     def ls(self,args):
         #ignore any switched
         args = [arg for arg in args if arg[0] != '-']
+        
         if len(args) == 0:
             path = self.cwd
         else:
@@ -383,23 +386,51 @@ class BashComputer(Emulator):
             return file.lsformat() + '\n'
 
     def cd(self,args):
-        print args
         args = [arg for arg in args if arg[0] != '-']
         if len(args) == 0:
             path = self.home_path
             return '\n'
-        if args[0] == '/':
+        path = args[0]
+        if path[0] == '/':
             #absolute
-            self.cwd = Path(args[0])
+            self.cwd = Path(path)
         else:
             try:
-                self.cwd = self.cwd.Extend(Path(args[0]))
-            except NameError:
-                return 'invalid path for cd\n'
+                self.cwd = self.cwd.Extend(Path(path))
+            except:
+                return 'invalid path\n'
         return '\n'
 
     def pwd(self,args):
         return self.cwd.format() + '\n'
+
+    def cat(self,args):
+        args = [arg for arg in args if arg[0] != '-']
+        if len(args) == 0:
+            return '\n'
+        path = args[0]
+        if path == '/':
+            path = Path(path)
+        else:
+            try:
+                path = self.cwd.Extend(Path(path))
+            except:
+                return 'invalid path\n'
+        
+        try:
+            file = self.FileSystem.GetFile(path)
+        except InvalidPath:
+            return 'Invalid Path\n'
+        except NoSuchFile:
+            return 'NoSuchFile\n'
+        if isinstance(file,Directory):
+            return 'cat: %s: Is a directory\n' % file.format()
+        return '%s\n' % file.data
+    
+    def file(self,args):
+        return '\n'
+        
+        
         
 class DomsComputer(BashComputer):
     Banner = 'This is Dom\'s private diary computer : keep your nose out!\n$'
@@ -408,4 +439,4 @@ class DomsComputer(BashComputer):
                              '/usr/share'          : None,
                              '/tmp'                : None,
                              '/var/log'            : None,
-                             '/bin/ls'             : 'edit_diary'})
+                             '/bin/ls'             : 'sounds.pyc'})
