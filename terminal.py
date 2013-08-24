@@ -163,6 +163,7 @@ class Emulator(ui.UIElement):
         self.scale = 3
         self.gameview = gameview
         self.computer = computer
+        self.text_buffer = ''
         
         self.size = (self.absolute.size/(globals.text_manager.GetSize(' ',self.scale).to_float())).to_int()
         self.quads = []
@@ -195,6 +196,13 @@ class Emulator(ui.UIElement):
 
     def Update(self,t):
         self.t = t
+        if self.text_buffer:
+            self.AddText(self.text_buffer[:100])
+            self.text_buffer = self.text_buffer[100:]
+            if not self.text_buffer:
+                self.AddKey(ord('$'),True)
+                self.current_buffer = []
+            return
         if self.cursor_flash == None:
             self.cursor_flash = t
             return
@@ -231,6 +239,9 @@ class Emulator(ui.UIElement):
 
     def Dispatch(self,command):
         pass
+
+    def AddTextBuffer(self,message):
+        self.text_buffer = message
 
     def AddText(self,text):
         for char in text:
@@ -281,6 +292,10 @@ class Emulator(ui.UIElement):
                 globals.text_manager.SetLetterCoords(self.quads[x][y],' ')
 
     def AddKey(self,key,userInput = True,repeat = False):
+        if userInput and key == 3:
+            print 'a'
+            self.text_buffer = ''
+            self.AddKey(ord('\n'))
         if userInput and not repeat:
             #for sound in globals.sounds.typing_sounds:
             #    sound.stop()
@@ -347,20 +362,28 @@ class BashComputer(Emulator):
                          'cat'  : self.cat,
                          'file' : self.file}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
+        self.file_sigs = {'ae1dbfcbb43c1a38a3c8114283a602487b69fcdf' : 'ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x35087c06ea71d4eff1d8e2536e96213e3bd99761, not stripped',
+                          'e6eb713cd887bd0e253414d311cfb6b9f2707c2c' : 'ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x7f981e03f231371c5feaaeab28d9e23639e57cd3, stripped'}
         self.cwd = Path('/')
     def Dispatch(self,message):
         self.Handle(message)
-        self.AddKey(ord('$'),True)
+        #self.AddKey(ord('$'),True)
 
     def Handle(self,message):
-        parts = message.strip().split(' ')
+        parts = message.strip().split()
+        if not parts:
+            self.AddText('$')
+            return
         try:
             command = self.commands[parts[0]]
         except KeyError:
             self.AddText('%s : command not found\n' % parts[0])
             return
+        except:
+            self.AddText('%s : bad command' % message)
+            return
         output = command(parts[1:])
-        self.AddText(output)
+        self.AddTextBuffer(output)
 
     def ls(self,args):
         #ignore any switched
@@ -388,7 +411,7 @@ class BashComputer(Emulator):
     def cd(self,args):
         args = [arg for arg in args if arg[0] != '-']
         if len(args) == 0:
-            path = self.home_path
+            self.cwd = self.home_path
             return '\n'
         path = args[0]
         if path[0] == '/':
@@ -403,13 +426,9 @@ class BashComputer(Emulator):
 
     def pwd(self,args):
         return self.cwd.format() + '\n'
-
-    def cat(self,args):
-        args = [arg for arg in args if arg[0] != '-']
-        if len(args) == 0:
-            return '\n'
-        path = args[0]
-        if path == '/':
+                        
+    def GetFileData(self,path):
+        if path[0] == '/':
             path = Path(path)
         else:
             try:
@@ -420,16 +439,41 @@ class BashComputer(Emulator):
         try:
             file = self.FileSystem.GetFile(path)
         except InvalidPath:
-            return 'Invalid Path\n'
+            raise FileSystemException('Invalid Path\n')
         except NoSuchFile:
-            return 'NoSuchFile\n'
+            raise FileSystemException('NoSuchFile\n')
         if isinstance(file,Directory):
-            return 'cat: %s: Is a directory\n' % file.format()
+            raise FileSystemException('%s: Is a directory\n' % file.filename)
+        return file
+
+    def cat(self,args):
+        args = [arg for arg in args if arg[0] != '-']
+        if len(args) == 0:
+            return '\n'
+        path = args[0]
+        try:
+            file = self.GetFileData(path)
+        except FileSystemException as e:
+            return 'cat: ' + str(e)
+
         return '%s\n' % file.data
     
     def file(self,args):
-        return '\n'
-        
+        args = [arg for arg in args if arg and arg[0] != '-']
+        if len(args) == 0:
+            return '\n'
+        path = args[0]
+        try:
+            file = self.GetFileData(path)
+        except FileSystemException as e:
+            return 'file: ' + str(e)
+
+        h = hashlib.sha1(file.data).hexdigest()
+        try:
+            out = self.file_sigs[h]
+        except KeyError:
+            out = 'data'
+        return '%s: %s\n' % (file.filename,out)
         
         
 class DomsComputer(BashComputer):
@@ -439,4 +483,4 @@ class DomsComputer(BashComputer):
                              '/usr/share'          : None,
                              '/tmp'                : None,
                              '/var/log'            : None,
-                             '/bin/ls'             : 'sounds.pyc'})
+                             '/bin/ls'             : 'ls'})
