@@ -188,7 +188,7 @@ class GameMode(Mode):
                 tile = self.parent.map.data[facing.x][facing.y]
             except IndexError:
                 return
-            tile.Interact()
+            tile.Interact(self.parent.map.player)
             return
             computer = self.parent.map.player.AdjacentComputer()
             if computer:

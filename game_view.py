@@ -126,10 +126,11 @@ class TileTypes:
     BATHROOM_TILE      = 16
     LAB_TILE           = 17
     DOOR_LOCKED        = 18
+    LOCKER             = 21
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN,DOOR_LOCKED))
     Computers  = set()
-    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR,DISH)) | Computers
+    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR,DISH,LOCKER)) | Computers
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
@@ -166,8 +167,51 @@ class TileData(object):
         self.quad.SetVertices(bl,tr,0)
     def Delete(self):
         self.quad.Delete()
-    def Interact(self):
+    def Interact(self,player):
         pass
+
+class ObjectTypes:
+    BED_UP   = 1
+    BED_DOWN = 2
+    DISH     = 3
+    LOCKER   = 4
+    CAR      = 5
+
+class GameObject(object):
+    texture_names = {ObjectTypes.BED_UP   : ('bed_up.png'  ,Point(0,0)),
+                     ObjectTypes.BED_DOWN : ('bed_down.png',Point(0,0)),
+                     ObjectTypes.CAR      : ('car.png'     ,Point(0,0)),
+                     ObjectTypes.DISH     : ('dish.png'    ,Point(0,0))}
+    def __init__(self,pos):
+        self.pos = pos
+        self.name = self.texture_names[self.type]
+        self.size = ((globals.atlas.TextureSubimage(self.name).size)/globals.tile_dimensions).to_int()
+        self.quad = drawing.Quad(globals.quad_buffer,tc = globals.atlas.TextureSpriteCoords(self.name))
+        bl        = pos * globals.tile_dimensions
+        tr        = bl + self.size*globals.tile_dimensions
+        self.quad.SetVertices(bl,tr,0)
+
+    def Interact(self,player):
+        pass
+
+class Dish(GameObject):
+    type = ObjectTypes.DISH
+
+class Bed(GameObject):
+    def __init__(self,pos,direction = 'up'):
+        if direction == 'up':
+            self.type = ObjectTypes.BED_UP
+        else:
+            self.type = ObjectTypes.BED_DOWN
+        super(Bed,self).__init__(pos)
+
+class Locker(GameObject):
+    type = ObjectTypes.LOCKER
+
+class Car(GameObject):
+    type = ObjectTypes.CAR
+    def Interact(self,player):
+        print 'can\'t leave yet'
 
 class Door(TileData):
     def __init__(self,type,pos):
@@ -177,7 +221,6 @@ class Door(TileData):
         else:
             self.locked = False
         super(Door,self).__init__(type,pos)
-
         
     def Toggle(self):
         if self.type == TileTypes.DOOR_CLOSED:
@@ -186,7 +229,7 @@ class Door(TileData):
             self.type = TileTypes.DOOR_CLOSED
         self.quad.SetTextureCoordinates(globals.atlas.TextureSpriteCoords(self.texture_names[self.type]))
 
-    def Interact(self):
+    def Interact(self,player):
         if not self.locked:
             self.Toggle()
         else:
@@ -223,6 +266,8 @@ class GameMap(object):
     def __init__(self,name):
         self.size   = Point(124,76)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]
+        self.object_cache = {}
+        self.object_list = []
         self.actors = []
         self.doors  = []
         self.player = None
