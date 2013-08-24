@@ -1,4 +1,5 @@
 resource/sprites/barrier.png:tiles_atlas_0.png:0:496:96:16
+resource/sprites/car.png:tiles_atlas_0.png:0:464:32:32
 resource/sprites/chain.png:tiles_atlas_0.png:96:496:16:16
 resource/sprites/grass.png:tiles_atlas_0.png:112:496:16:16
 resource/sprites/marking.png:tiles_atlas_0.png:128:496:16:16
@@ -6,7 +7,7 @@ resource/sprites/player_back.png:tiles_atlas_0.png:144:499:9:13
 resource/sprites/player_front.png:tiles_atlas_0.png:153:499:9:13
 resource/sprites/player_left.png:tiles_atlas_0.png:162:499:9:13
 resource/sprites/player_right.png:tiles_atlas_0.png:171:499:9:13
-resource/sprites/road.png:tiles_atlas_0.png:0:480:16:16
-resource/sprites/sign.png:tiles_atlas_0.png:16:480:64:16
-resource/sprites/tile.png:tiles_atlas_0.png:80:480:16:16
-resource/sprites/wall.png:tiles_atlas_0.png:96:480:16:16
+resource/sprites/road.png:tiles_atlas_0.png:32:480:16:16
+resource/sprites/sign.png:tiles_atlas_0.png:48:480:64:16
+resource/sprites/tile.png:tiles_atlas_0.png:112:480:16:16
+resource/sprites/wall.png:tiles_atlas_0.png:128:480:16:16

@@ -113,22 +113,25 @@ class TileTypes:
     CHAINLINK         = 9
     JODRELL_SIGN      = 10
     BARRIER           = 11
+    CAR               = 12
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN))
     Computers  = set()
-    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER)) | Computers
+    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR)) | Computers
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
                      TileTypes.ROAD          : 'road.png',
                      TileTypes.ROAD_MARKING  : 'marking.png',
                      TileTypes.WALL          : 'wall.png',
+                     TileTypes.PLAYER        : 'road.png',
                      TileTypes.DOOR_CLOSED   : 'door_closed.png',
                      TileTypes.DOOR_OPEN     : 'door_open.png',
                      TileTypes.TILE          : 'tile.png',
                      TileTypes.JODRELL_SIGN  : 'sign.png',
                      TileTypes.CHAINLINK     : 'chain.png',
                      TileTypes.BARRIER       : 'barrier.png',
+                     TileTypes.CAR           : 'car.png'
                      }
     
     def __init__(self,type,pos):
@@ -144,6 +147,8 @@ class TileData(object):
         bl        = pos * globals.tile_dimensions
         tr        = bl + self.size*globals.tile_dimensions
         self.quad.SetVertices(bl,tr,0)
+    def Delete(self):
+        self.quad.Delete()
 
 class Door(TileData):
     def __init__(self,type,pos):
@@ -173,6 +178,7 @@ class GameMap(object):
                      'c' : TileTypes.CHAINLINK,
                      's' : TileTypes.JODRELL_SIGN,
                      'p' : TileTypes.PLAYER,
+                     'v' : TileTypes.CAR,
                      'b' : TileTypes.BARRIER,}
     def __init__(self,name):
         self.size   = Point(120,81)
@@ -188,12 +194,16 @@ class GameMap(object):
                     line += ' '*(self.size.x - len(line))
                 if len(line) > self.size.x:
                     line = line[:self.size.x]
-                for x,tile in enumerate(line):
+                for inv_x,tile in enumerate(line[::-1]):
+                    x = self.size.x-1-inv_x
                     #try:
                     if 1:
                         td = TileDataFactory(self,self.input_mapping[tile],Point(x,y))
                         for tile_x in xrange(td.size.x):
                             for tile_y in xrange(td.size.y):
+                                if self.data[x+tile_x][y+tile_y] != TileTypes.GRASS:
+                                    self.data[x+tile_x][y+tile_y].Delete()
+                                    self.data[x+tile_x][y+tile_y] = TileTypes.GRASS
                                 if self.data[x+tile_x][y+tile_y] == TileTypes.GRASS:
                                     self.data[x+tile_x][y+tile_y] = td
                         if self.input_mapping[tile] == TileTypes.PLAYER:
