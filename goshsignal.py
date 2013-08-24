@@ -10,7 +10,7 @@ def Init():
     """Initialise everything. Run once on startup"""
     w,h = (1280,720)
     globals.tile_scale            = Point(1,1)
-    globals.scale                 = Point(4,4)
+    globals.scale                 = Point(3,3)
     globals.screen                = Point(w,h)/globals.scale
     globals.screen_root           = ui.UIRoot(Point(0,0),globals.screen)
     globals.quad_buffer           = drawing.QuadBuffer(131072)
