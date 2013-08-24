@@ -182,7 +182,8 @@ class GameMode(Mode):
 
         elif key == pygame.K_SPACE:
             facing = self.parent.map.player.Facing()
-            print self.parent.map.player.pos,self.parent.map.player.Facing()
+            if not facing:
+                return
             try:
                 tile = self.parent.map.data[facing.x][facing.y]
             except IndexError:

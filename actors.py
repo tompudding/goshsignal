@@ -53,6 +53,11 @@ class Actor(object):
     
     def Facing(self):
         facing = self.pos + (self.size/2) + self.dirs_pos[self.dir]
+        #if we're in the tile, we're not facing it
+        for corner in self.corners:
+            pos = self.pos + corner
+            if pos.to_int() == facing.to_int():
+                return None
         return facing.to_int()
 
     def Move(self,amount):
