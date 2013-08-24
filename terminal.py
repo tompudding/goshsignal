@@ -360,10 +360,525 @@ class BashComputer(Emulator):
                          'cd'   : self.cd,
                          'pwd'  : self.pwd,
                          'cat'  : self.cat,
-                         'file' : self.file}
+                         'file' : self.file,
+                         'strings' : self.strings}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
         self.file_sigs = {'ae1dbfcbb43c1a38a3c8114283a602487b69fcdf' : 'ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x35087c06ea71d4eff1d8e2536e96213e3bd99761, not stripped',
                           'e6eb713cd887bd0e253414d311cfb6b9f2707c2c' : 'ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x7f981e03f231371c5feaaeab28d9e23639e57cd3, stripped'}
+        self.strings_sigs = {'ae1dbfcbb43c1a38a3c8114283a602487b69fcdf' : """/lib/ld-linux-armhf.so.3
+__gmon_start__
+libc.so.6
+socket
+puts
+abort
+stdin
+tolower
+fgets
+memset
+strcmp
+__libc_start_main
+GLIBC_2.4
+This is my secret diary, enter the password:
+morpheus
+correct
+Connecting to the diary server...
+Bad password!
+Error opening socket
+""",
+                             'e6eb713cd887bd0e253414d311cfb6b9f2707c2c' : """/lib/ld-linux-armhf.so.3
+__gmon_start__
+libc.so.6
+socket
+puts
+abort
+stdin
+tolower
+fgets
+memset
+strcmp
+__libc_start_main
+GLIBC_2.4
+This is my secret diary, enter the password:
+morpheus
+correct
+Connecting to the diary server...
+Bad password!
+Error opening socket
+pudding@pudding-desktop:~/Projects/goshsignal$ strings ls
+/lib/ld-linux-armhf.so.3
+vbICw)
+gII"
+,crL
+r~FX7
+libselinux.so.1
+__gmon_start__
+_Jv_RegisterClasses
+_init
+fgetfilecon
+freecon
+lgetfilecon
+_fini
+librt.so.1
+clock_gettime
+libacl.so.1
+acl_get_entry
+acl_extended_file_nofollow
+acl_get_tag_type
+libgcc_s.so.1
+__aeabi_unwind_cpp_pr0
+libc.so.6
+fflush
+strcpy
+__printf_chk
+fnmatch
+setlocale
+mbrtowc
+strncmp
+strrchr
+fflush_unlocked
+dcgettext
+getpwuid
+closedir
+__mempcpy_chk
+getgrgid
+error
+signal
+strncpy
+mbstowcs
+sigprocmask
+__stack_chk_fail
+iswprint
+realloc
+abort
+_exit
+program_invocation_name
+strftime
+__assert_fail
+__ctype_get_mb_cur_max
+isatty
+getpwnam
+calloc
+strlen
+sigemptyset
+memset
+localeconv
+strstr
+__errno_location
+memcmp
+mempcpy
+__fxstat64
+_setjmp
+__fprintf_chk
+sigaddset
+getgrnam
+wcswidth
+stdout
+fputc
+fseeko64
+memcpy
+fclose
+strtoul
+malloc
+raise
+mbsinit
+__lxstat64
+nl_langinfo
+opendir
+__xstat64
+__ctype_b_loc
+getenv
+__freading
+stderr
+wcwidth
+ioctl
+_obstack_newchunk
+readlink
+fileno
+fwrite
+gettimeofday
+sigaction
+__memcpy_chk
+sigismember
+__fpending
+localtime
+lseek64
+strchr
+iswcntrl
+mktime
+program_invocation_short_name
+readdir64
+wcstombs
+__ctype_toupper_loc
+__ctype_tolower_loc
+__sprintf_chk
+memmove
+_obstack_begin
+bindtextdomain
+fwrite_unlocked
+strcmp
+__strtoull_internal
+tcgetpgrp
+__libc_start_main
+dirfd
+stpcpy
+strcoll
+__overflow
+fputs_unlocked
+free
+__progname
+__progname_full
+__cxa_atexit
+ld-linux-armhf.so.3
+__stack_chk_guard
+_edata
+__bss_start
+__bss_start__
+__bss_end__
+__end__
+_end
+GLIBC_2.4
+ACL_1.2
+ACL_1.0
+GCC_3.5
+=fff?
+1	 f
+3	 f
+1	 f
+3	 f
+gfff
+3	 f
+3	 f
+3	 f
+sort_files
+?pcdb-lswd
+posix-
+dev_ino_pop
+main
+sort_type != sort_version
+ls.c
+ %lu
+%*lu 
+target
+%*s 
+%s %*s 
+%*s, %*s 
+ -> 
+cannot access %s
+unlabeled
+cannot read symbolic link %s
+Try `%s --help' for more information.
+Usage: %s [OPTION]... [FILE]...
+List information about the FILEs (the current directory by default).
+Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.
+Mandatory arguments to long options are mandatory for short options too.
+  -a, --all                  do not ignore entries starting with .
+  -A, --almost-all           do not list implied . and ..
+      --author               with -l, print the author of each file
+  -b, --escape               print C-style escapes for nongraphic characters
+      --block-size=SIZE      scale sizes by SIZE before printing them.  E.g.,
+                               `--block-size=M' prints sizes in units of
+                               1,048,576 bytes.  See SIZE format below.
+  -B, --ignore-backups       do not list implied entries ending with ~
+  -c                         with -lt: sort by, and show, ctime (time of last
+                               modification of file status information)
+                               with -l: show ctime and sort by name
+                               otherwise: sort by ctime, newest first
+  -C                         list entries by columns
+      --color[=WHEN]         colorize the output.  WHEN defaults to `always'
+                               or can be `never' or `auto'.  More info below
+  -d, --directory            list directory entries instead of contents,
+                               and do not dereference symbolic links
+  -D, --dired                generate output designed for Emacs' dired mode
+  -f                         do not sort, enable -aU, disable -ls --color
+  -F, --classify             append indicator (one of */=>@|) to entries
+      --file-type            likewise, except do not append `*'
+      --format=WORD          across -x, commas -m, horizontal -x, long -l,
+                               single-column -1, verbose -l, vertical -C
+      --full-time            like -l --time-style=full-iso
+  -g                         like -l, but do not list owner
+      --group-directories-first
+                             group directories before files.
+                               augment with a --sort option, but any
+                               use of --sort=none (-U) disables grouping
+  -G, --no-group             in a long listing, don't print group names
+  -h, --human-readable       with -l, print sizes in human readable format
+                               (e.g., 1K 234M 2G)
+      --si                   likewise, but use powers of 1000 not 1024
+  -H, --dereference-command-line
+                             follow symbolic links listed on the command line
+      --dereference-command-line-symlink-to-dir
+                             follow each command line symbolic link
+                             that points to a directory
+      --hide=PATTERN         do not list implied entries matching shell PATTERN
+                               (overridden by -a or -A)
+      --indicator-style=WORD  append indicator with style WORD to entry names:
+                               none (default), slash (-p),
+                               file-type (--file-type), classify (-F)
+  -i, --inode                print the index number of each file
+  -I, --ignore=PATTERN       do not list implied entries matching shell PATTERN
+  -k                         like --block-size=1K
+  -l                         use a long listing format
+  -L, --dereference          when showing file information for a symbolic
+                               link, show information for the file the link
+                               references rather than for the link itself
+  -m                         fill width with a comma separated list of entries
+  -n, --numeric-uid-gid      like -l, but list numeric user and group IDs
+  -N, --literal              print raw entry names (don't treat e.g. control
+                               characters specially)
+  -o                         like -l, but do not list group information
+  -p, --indicator-style=slash
+                             append / indicator to directories
+  -q, --hide-control-chars   print ? instead of non graphic characters
+      --show-control-chars   show non graphic characters as-is (default
+                             unless program is `ls' and output is a terminal)
+  -Q, --quote-name           enclose entry names in double quotes
+      --quoting-style=WORD   use quoting style WORD for entry names:
+                               literal, locale, shell, shell-always, c, escape
+  -r, --reverse              reverse order while sorting
+  -R, --recursive            list subdirectories recursively
+  -s, --size                 print the allocated size of each file, in blocks
+  -S                         sort by file size
+      --sort=WORD            sort by WORD instead of name: none -U,
+                             extension -X, size -S, time -t, version -v
+      --time=WORD            with -l, show time as WORD instead of modification
+                             time: atime -u, access -u, use -u, ctime -c,
+                             or status -c; use specified time as sort key
+                             if --sort=time
+      --time-style=STYLE     with -l, show times using style STYLE:
+                             full-iso, long-iso, iso, locale, +FORMAT.
+                             FORMAT is interpreted like `date'; if FORMAT is
+                             FORMAT1<newline>FORMAT2, FORMAT1 applies to
+                             non-recent files and FORMAT2 to recent files;
+                             if STYLE is prefixed with `posix-', STYLE
+                             takes effect only outside the POSIX locale
+  -t                         sort by modification time, newest first
+  -T, --tabsize=COLS         assume tab stops at each COLS instead of 8
+  -u                         with -lt: sort by, and show, access time
+                               with -l: show access time and sort by name
+                               otherwise: sort by access time
+  -U                         do not sort; list entries in directory order
+  -v                         natural sort of (version) numbers within text
+  -w, --width=COLS           assume screen width instead of current value
+  -x                         list entries by lines instead of by columns
+  -X                         sort alphabetically by entry extension
+  -Z, --context              print any SELinux security context of each file
+  -1                         list one file per line
+      --help     display this help and exit
+      --version  output version information and exit
+SIZE may be (or may be an integer optionally followed by) one of following:
+KB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.
+Using color to distinguish file types is disabled both by default and
+with --color=never.  With --color=auto, ls emits color codes only when
+standard output is connected to a terminal.  The LS_COLORS environment
+variable can change the settings.  Use the dircolors command to set it.
+Exit status:
+ 0  if OK,
+ 1  if minor problems (e.g., cannot access subdirectory),
+ 2  if serious trouble (e.g., cannot access command-line argument).
+Report %s bugs to %s
+bug-coreutils@gnu.org
+%s home page: <%s>
+GNU coreutils
+http://www.gnu.org/software/coreutils/
+General help using GNU software: <http://www.gnu.org/gethelp/>
+Report %s translation bugs to <http://translationproject.org/team/>
+For complete documentation, run: info coreutils '%s invocation'
+full-iso
+vdir
+locale
+/usr/share/locale
+QUOTING_STYLE
+ignoring invalid value of environment variable QUOTING_STYLE: %s
+LS_BLOCK_SIZE
+BLOCK_SIZE
+COLUMNS
+ignoring invalid width in environment variable COLUMNS: %s
+TABSIZE
+ignoring invalid tab size in environment variable TABSIZE: %s
+abcdfghiklmnopqrstuvw:xABCDFGHI:LNQRST:UXZ1
+invalid line width: %s
+invalid tab size: %s
+--sort
+--time
+--format
+--color
+--indicator-style
+--quoting-style
+Richard M. Stallman
+David MacKenzie
+*=>@|
+TIME_STYLE
+invalid time style format %s
+time style
+%Y-%m-%d %H:%M:%S.%N %z
+%Y-%m-%d %H:%M
+%Y-%m-%d 
+%m-%d %H:%M
+error initializing month strings
+LS_COLORS
+unrecognized prefix: %s
+unparsable value for LS_COLORS environment variable
+sizeof (struct dev_ino) <= __extension__ ({ struct obstack const *__o = (&dev_ino_obstack); (unsigned) (__o->next_free - __o->object_base); })
+found
+cannot open directory %s
+cannot determine device and inode of %s
+%s: not listing already-listed directory
+reading directory %s
+closing directory %s
+total
+//DIRED//
+//SUBDIRED//
+//DIRED-OPTIONS// --quoting-style=%s
+hash_get_n_entries (active_dir_set) == 0
+01;34
+01;36
+01;35
+01;33
+01;32
+37;41
+30;43
+37;44
+34;42
+30;42
+30;41
+escape
+directory
+dired
+full-time
+group-directories-first
+human-readable
+inode
+numeric-uid-gid
+no-group
+hide-control-chars
+reverse
+size
+width
+almost-all
+ignore-backups
+classify
+file-type
+dereference-command-line
+dereference-command-line-symlink-to-dir
+hide
+ignore
+indicator-style
+dereference
+literal
+quote-name
+quoting-style
+recursive
+format
+show-control-chars
+sort
+tabsize
+time
+time-style
+color
+block-size
+context
+author
+help
+version
+none
+extension
+atime
+access
+ctime
+status
+verbose
+long
+commas
+horizontal
+across
+vertical
+single-column
+always
+force
+never
+auto
+if-tty
+slash
+%b %e  %Y
+%b %e %H:%M
+long-iso
+8.13
+invalid argument %s for %s
+ambiguous argument %s for %s
+Valid arguments are:
+  - `%s'
+, `%s'
+write error
+%s: %s
+POSIX
+# entries:         %lu
+# buckets:         %lu
+# buckets used:    %lu (%.2f%%)
+max bucket length: %lu
+KMGTPEZY
+%.0Lf
+%.1Lf
+BLOCKSIZE
+POSIXLY_CORRECT
+eEgGkKmMpPtTyYzZ0
+A NULL argv[0] was passed through an exec system call.
+/.libs/
+shell
+shell-always
+c-maybe
+clocale
+%m/%d/%y
+%Y-%m-%d
+%H:%M
+%H:%M:%S
+%s (%s) %s
+%s %s
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Written by %s.
+Written by %s and %s.
+Written by %s, %s, and %s.
+Written by %s, %s, %s,
+and %s.
+Written by %s, %s, %s,
+%s, and %s.
+Written by %s, %s, %s,
+%s, %s, and %s.
+Written by %s, %s, %s,
+%s, %s, %s, and %s.
+Written by %s, %s, %s,
+%s, %s, %s, %s,
+and %s.
+Written by %s, %s, %s,
+%s, %s, %s, %s,
+%s, and %s.
+Written by %s, %s, %s,
+%s, %s, %s, %s,
+%s, %s, and others.
+Report bugs to: %s
+Copyright %s %d Free Software Foundation, Inc.
+memory exhausted
+xstrtoul
+0 <= strtol_base && strtol_base <= 36
+xstrtol.c
+invalid %s%s argument `%s'
+invalid suffix in %s%s argument `%s'
+%s%s argument `%s' too large
+xstrtoumax
+%s: option '%s' is ambiguous; possibilities:
+ '--%s'
+%s: option '--%s' doesn't allow an argument
+%s: option '%c%s' doesn't allow an argument
+%s: option '--%s' requires an argument
+%s: unrecognized option '--%s'
+%s: unrecognized option '%c%s'
+%s: invalid option -- '%c'
+%s: option requires an argument -- '%c'
+%s: option '-W %s' is ambiguous
+%s: option '-W %s' doesn't allow an argument
+%s: option '-W %s' requires an argument
+"""}
         self.cwd = Path('/')
     def Dispatch(self,message):
         self.Handle(message)
@@ -377,10 +892,10 @@ class BashComputer(Emulator):
         try:
             command = self.commands[parts[0]]
         except KeyError:
-            self.AddText('%s : command not found\n' % parts[0])
+            self.AddTextBuffer('%s : command not found\n' % parts[0])
             return
         except:
-            self.AddText('%s : bad command' % message)
+            self.AddTextBuffer('%s : bad command' % message)
             return
         output = command(parts[1:])
         self.AddTextBuffer(output)
@@ -474,6 +989,41 @@ class BashComputer(Emulator):
         except KeyError:
             out = 'data'
         return '%s: %s\n' % (file.filename,out)
+
+    def file(self,args):
+        args = [arg for arg in args if arg and arg[0] != '-']
+        if len(args) == 0:
+            return '\n'
+        path = args[0]
+        try:
+            file = self.GetFileData(path)
+        except FileSystemException as e:
+            return 'file: ' + str(e)
+
+        h = hashlib.sha1(file.data).hexdigest()
+        try:
+            out = self.file_sigs[h]
+        except KeyError:
+            out = 'data'
+        return '%s: %s\n' % (file.filename,out)
+
+    def strings(self,args):
+        args = [arg for arg in args if arg and arg[0] != '-']
+        if len(args) == 0:
+            return '\n'
+        path = args[0]
+        try:
+            file = self.GetFileData(path)
+        except FileSystemException as e:
+            return 'strings: ' + str(e)
+
+        h = hashlib.sha1(file.data).hexdigest()
+        try:
+            out = self.strings_sigs[h]
+        except KeyError:
+            out = 'data'
+        return '%s: %s\n' % (file.filename,out)
+
         
         
 class DomsComputer(BashComputer):
