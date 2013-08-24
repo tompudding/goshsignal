@@ -182,6 +182,7 @@ class GameMode(Mode):
 
         elif key == pygame.K_SPACE:
             facing = self.parent.map.player.Facing()
+            print facing
             if not facing:
                 return
             try:
@@ -202,3 +203,5 @@ class GameMode(Mode):
             actor = self.parent.map.player.AdjacentActor()
             if actor:
                 actor.Converse()
+
+                

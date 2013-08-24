@@ -35,10 +35,10 @@
      |.................................|                                                                              c
      |.................................|                                                                              c
      |.................................|                                                                              c
-     |.................................|    D                                                                         c
+     |.................................|                                                                              c
      |.................................|                                                                              c
      +----------------------------L----+                                                                              c
-                                     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                     ccccccc cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
 
@@ -71,8 +71,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccsccccb     rcc
                                                                 c      rrrmrrr      c
                                                                 c      rrrrrrr      c
                                                                 c      rrrmrrr      c
+                                                                c      rrrrrrr      c
                                                                 c      rrrmrrr      c
-                                                                c      rvrmrrr      c
                                                                 c      rrrrrrr      c
 
 

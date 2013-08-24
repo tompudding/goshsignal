@@ -49,7 +49,7 @@ class Actor(object):
         tr = bl + (globals.tile_scale*Point(self.width,self.height))
         bl = bl.to_int()
         tr = tr.to_int()
-        self.quad.SetVertices(bl,tr,1)
+        self.quad.SetVertices(bl,tr,4)
     
     def Facing(self):
         facing = self.pos + (self.size/2) + self.dirs_pos[self.dir]

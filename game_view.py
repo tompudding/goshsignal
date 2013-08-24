@@ -119,18 +119,15 @@ class TileTypes:
     CHAINLINK          = 9
     JODRELL_SIGN       = 10
     BARRIER            = 11
-    CAR                = 12
     ROAD_MARKING_HORIZ = 13
-    DISH               = 14
     WOOD               = 15
     BATHROOM_TILE      = 16
     LAB_TILE           = 17
     DOOR_LOCKED        = 18
-    LOCKER             = 21
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN,DOOR_LOCKED))
     Computers  = set()
-    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER,CAR,DISH,LOCKER)) | Computers
+    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER)) | Computers
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
@@ -145,8 +142,6 @@ class TileData(object):
                      TileTypes.JODRELL_SIGN  : 'sign.png',
                      TileTypes.CHAINLINK     : 'chain.png',
                      TileTypes.BARRIER       : 'barrier.png',
-                     TileTypes.CAR           : 'car.png',
-                     TileTypes.DISH          : 'dish.png',
                      TileTypes.WOOD          : 'wood.png',
                      TileTypes.BATHROOM_TILE : 'bathroom_tile.png',
                      TileTypes.LAB_TILE      : 'labtile.png',
@@ -178,18 +173,26 @@ class ObjectTypes:
     CAR      = 5
 
 class GameObject(object):
-    texture_names = {ObjectTypes.BED_UP   : ('bed_up.png'  ,Point(0,0)),
-                     ObjectTypes.BED_DOWN : ('bed_down.png',Point(0,0)),
-                     ObjectTypes.CAR      : ('car.png'     ,Point(0,0)),
-                     ObjectTypes.DISH     : ('dish.png'    ,Point(0,0))}
+    texture_names = {ObjectTypes.BED_UP   : ('bedup.png'   , Point(0,0)),
+                     ObjectTypes.BED_DOWN : ('beddown.png' , Point(0,0)),
+                     ObjectTypes.CAR      : ('car.png'     , Point(0,2)),
+                     ObjectTypes.DISH     : ('dish.png'    , Point(0,0))}
     def __init__(self,pos):
         self.pos = pos
-        self.name = self.texture_names[self.type]
-        self.size = ((globals.atlas.TextureSubimage(self.name).size)/globals.tile_dimensions).to_int()
+        self.name,self.offset = self.texture_names[self.type]
+        self.size = ((globals.atlas.TextureSubimage(self.name).size.to_float())/globals.tile_dimensions)
         self.quad = drawing.Quad(globals.quad_buffer,tc = globals.atlas.TextureSpriteCoords(self.name))
-        bl        = pos * globals.tile_dimensions
+        bl        = (pos + self.offset) * globals.tile_dimensions
         tr        = bl + self.size*globals.tile_dimensions
-        self.quad.SetVertices(bl,tr,0)
+        print self.name,self.size,bl,tr
+        self.quad.SetVertices(bl,tr,1)
+
+    def CoveredTiles(self):
+        bl = (self.pos + self.offset).to_int()
+        tr = (bl + self.size + Point(1,1)).to_int()
+        for x in xrange(bl.x,tr.x):
+            for y in xrange(bl.y,tr.y):
+                yield (x,y)
 
     def Interact(self,player):
         pass
@@ -257,8 +260,6 @@ class GameMap(object):
                      'c' : TileTypes.CHAINLINK,
                      's' : TileTypes.JODRELL_SIGN,
                      'p' : TileTypes.PLAYER,
-                     'v' : TileTypes.CAR,
-                     'D' : TileTypes.DISH,
                      'w' : TileTypes.WOOD,
                      't' : TileTypes.BATHROOM_TILE,
                      'b' : TileTypes.BARRIER,
@@ -301,6 +302,17 @@ class GameMap(object):
                 y -= 1
                 if y < 0:
                     break
+
+        self.AddObject(Dish(Point(44,38)))
+        self.AddObject(Bed(Point(86,21)))
+        self.AddObject(Car(Point(73,2)))
+
+    def AddObject(self,obj):
+        self.object_list.append(obj)
+        #Now for each tile that the object touches, put it in the cache
+        for tile in obj.CoveredTiles():
+            print obj.name,tile
+            self.object_cache[tile] = obj
 
 class GameView(ui.RootElement):
     def __init__(self):
