@@ -122,6 +122,9 @@ class TileTypes:
     CAR                = 12
     ROAD_MARKING_HORIZ = 13
     DISH               = 14
+    WOOD               = 15
+    BATHROOM_TILE      = 16
+    LAB_TILE           = 17
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN))
     Computers  = set()
@@ -142,6 +145,9 @@ class TileData(object):
                      TileTypes.BARRIER       : 'barrier.png',
                      TileTypes.CAR           : 'car.png',
                      TileTypes.DISH          : 'dish.png',
+                     TileTypes.WOOD          : 'wood.png',
+                     TileTypes.BATHROOM_TILE : 'bathroom_tile.png',
+                     TileTypes.LAB_TILE      : 'labtile.png',
                      }
     
     def __init__(self,type,pos):
@@ -198,7 +204,10 @@ class GameMap(object):
                      'p' : TileTypes.PLAYER,
                      'v' : TileTypes.CAR,
                      'D' : TileTypes.DISH,
-                     'b' : TileTypes.BARRIER,}
+                     'w' : TileTypes.WOOD,
+                     't' : TileTypes.BATHROOM_TILE,
+                     'b' : TileTypes.BARRIER,
+                     'l' : TileTypes.LAB_TILE}
     def __init__(self,name):
         self.size   = Point(124,76)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]

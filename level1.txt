@@ -41,23 +41,23 @@
                                      cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
-                                   +---------------------------------+         +---------------------------------------+
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   |.................................|         |.......................................|
-                                   +----------------------------d----+         +---d-----------------------------------+
 
-    rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                                   +----------------------------+----+         +--------------------------------+---+ 
+                                   |............................|....|         |................................|ttt| 
+                                   |l.l.l.l.l.l.l.l.l.l.l.l.l.l.|....|         |................................|ttt| 
+                                   |............................|....|         |................................|ttt| 
+                                   |l.l.l.l.l.l.l.l.l.l.l.l.l.l.|....|         |w...w...w...w...w...w...w...w...+-d-+ 
+                                   |............................|....|         |....................................| 
+                                   |l.l.l.l.l.l.l.l.l.l.l.l.l.l.|....|         |....................................| 
+                                   |............................|....|         |....................................| 
+                                   |l.l.l.l.l.l.l.l.l.l.l.l.l.l.|....|         |w...w...w...w...w...w...w...w...w...| 
+                                   |............................|....|         |....................................| 
+                                   |l.l.l.l.l.l.l.l.l.l.l.l.l.l.+d+..|         |....................................| 
+                                   |..............................|..|         |....................................| 
+                                   |l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.|..|         |w...w...w...w...w...w...w...w...w...| 
+                                   +----------------------------d-+--+         +---d--------------------------------+ 
+                                                                              
+    rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrprrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
     rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
     rrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrM
     rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
@@ -71,7 +71,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccsccccb     rcc
                                                                 c      rrrmrrr      c
                                                                 c      rrrrrrr      c
                                                                 c      rrrmrrr      c
-                                                                c      rrrprrr      c
+                                                                c      rrrmrrr      c
                                                                 c      rvrmrrr      c
                                                                 c      rrrrrrr      c
 
