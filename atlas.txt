@@ -1,0 +1,6 @@
+resource/sprites/grass.png:atlas_0.png:0:496:16:16
+resource/sprites/hacker_back.png:atlas_0.png:16:499:9:13
+resource/sprites/hacker_front.png:atlas_0.png:25:499:9:13
+resource/sprites/hacker_left.png:atlas_0.png:34:499:9:13
+resource/sprites/hacker_right.png:atlas_0.png:43:499:9:13
+resource/sprites/tile.png:atlas_0.png:0:480:16:16
