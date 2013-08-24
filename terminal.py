@@ -7,6 +7,141 @@ import sqlite3
 import ui,globals,drawing,os,copy
 from globals.types import Point
 
+class Path(object):
+    def __init__(self,path):
+        parts = []
+        escaped = False
+        current = []
+        for i,char in enumerate(path):
+            print escaped,current,i,char
+            if char == '\0':
+                break
+            if escaped:
+                current.append(char)
+                escaped = False
+            if char == '\\':
+                escaped = True
+                continue
+            if char == '/':
+                if current == []:
+                    continue
+                parts.append(''.join(current))
+                current = []
+                continue
+            current.append(char)
+        filename = ''.join(current)
+        if filename == '':
+            try:
+                filename = parts.pop()
+            except IndexError:
+                #It's the root dir
+                filename = '/'
+        
+        self.filename = filename
+        parts.append(filename)
+        self.parts = []
+        for part in parts:
+            if part == '..':
+                try:
+                    self.parts.pop()
+                except IndexError:
+                    pass
+                continue
+            if part == '.':
+                continue
+            self.parts.append(part)
+        if self.parts == []:
+            self.parts = ['/']
+            self.filename = '/'
+        print self.parts,path
+        self.parts = tuple(self.parts)
+
+    def Add(self,extra):
+        return Path('/' + '/'.join(self.parts + (extra,)))
+
+    def __hash__(self):
+        return hash(self.parts)
+
+class File(object):
+    def __init__(self,path,data):
+        self.path = path
+        self.data = data
+        self.filename = self.path.filename
+
+class Directory(File):
+    def __init__(self,path):
+        super(Directory,self).__init__(path,None)
+        self.files = []
+        self.filename = self.path.filename
+
+    def GetFile(self,name):
+        for file in self.files:
+            if name == file.filename:
+                return file
+        return None
+
+    def AddFile(self,f):
+        self.files.append(f)
+
+class FileSystemException(Exception):
+    pass
+
+class InvalidPath(FileSystemException):
+    pass
+
+class NoSuchFile(FileSystemException):
+    pass
+
+class FileSystem(object):
+    def __init__(self,files):
+        self.root = Directory(Path('/'))
+        
+        for path,filename in files.iteritems():
+            if filename != None:
+                with open(filename,'rb') as f:
+                    data = f.read()
+            else:
+                data = None
+            path = Path(path)
+            current_dir = self.root
+            bad = False
+            for part in path.parts[:-1]:
+                f = current_dir.GetFile(part)
+                if f and not isinstance(f,Directory):
+                    #tried to use a file as a dir, skip this guy
+                    bad = True
+                if not f:
+                    f = Directory(current_dir.path.Add(part))
+                    print 'b',current_dir,f
+                    current_dir.AddFile(f)
+                current_dir = f
+            if bad:
+                continue
+            if data == None:
+                new_file = Directory(path)
+            else:
+                new_file = File(path,data)
+            current_dir.AddFile(new_file)
+        d = self.root
+        print 'a',d.path.parts,[f.path.parts for f in d.files]
+
+    def GetFile(self,path):
+        current_dir = self.root
+        print 'x',path.parts
+        if len(path.parts) == 1 and path.filename == '/':
+            return self.root
+        for part in path.parts[:-1]:
+            f = current_dir.GetFile(part)
+            if f and not isinstance(f,Directory):
+                raise InvalidPath()
+            if not f:
+                raise NoSuchFile()
+            current_dir = f
+        out = current_dir.GetFile(path.filename)
+        if not out:
+            raise NoSuchFile()
+        return out
+
 class Emulator(ui.UIElement):
     cursor_char     = chr(0x9f)
     cursor_interval = 500
@@ -197,7 +332,6 @@ class Emulator(ui.UIElement):
             self.current_buffer.append(key)
 
 class BashComputer(Emulator):
-    Banner = 'hi\n$'
     def __init__(self,parent,gameview,computer,background,foreground):
         self.commands = {'ls' : self.ls}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
@@ -216,6 +350,24 @@ class BashComputer(Emulator):
         self.AddText(output)
         
     def ls(self,args):
-        print args
+        #ignore any switched
+        args = [arg for arg in args if arg[0] != '-']
+        path = Path(args[0])
+        try:
+            file = self.FileSystem.GetFile(path)
+        except InvalidPath:
+            return 'Invalid Path\n'
+        except NoSuchFile:
+            return 'NoSuchFile\n'
+
+        #if isinstance(file,Directory):
+            
         return '\n'.join('abcd') + '\n'
         
+class DomsComputer(BashComputer):
+    Banner = 'This is Dom\'s private diary computer : keep your nose out!\n$'
+    FileSystem = FileSystem({'/home/dom/edit_diary':'edit_diary',
+                             '/usr/share'          : None,
+                             '/tmp'                : None,
+                             '/var/log'            : None,
+                             '/bin/ls'             : 'edit_diary'})

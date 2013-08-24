@@ -188,7 +188,6 @@ class GameObject(object):
         self.quad = drawing.Quad(globals.quad_buffer,tc = globals.atlas.TextureSpriteCoords(self.name))
         bl        = self.pos * globals.tile_dimensions
         tr        = bl + self.size*globals.tile_dimensions
-        print self.name,self.size,bl,tr
         self.quad.SetVertices(bl,tr,1)
 
     def CoveredTiles(self):
@@ -388,13 +387,12 @@ class GameMap(object):
         self.AddObject(Dish(Point(44,38)))
         self.AddObject(Bed(Point(86,21)))
         self.AddObject(Car(Point(73,2)))
-        self.AddObject(Computer(Point(94,21),terminal.BashComputer,self.parent))
+        self.AddObject(Computer(Point(94,21),terminal.DomsComputer,self.parent))
 
     def AddObject(self,obj):
         self.object_list.append(obj)
         #Now for each tile that the object touches, put it in the cache
         for tile in obj.CoveredTiles():
-            print obj.name,tile
             self.object_cache[tile] = obj
 
 class GameView(ui.RootElement):
