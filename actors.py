@@ -87,6 +87,11 @@ class Actor(object):
             target_tile_x = self.map.data[int(target_x)][int(pos.y)]
             if target_tile_x.type in game_view.TileTypes.Impassable:
                 amount.x = 0
+                
+            elif (int(target_x),int(pos.y)) in self.map.object_cache:
+                obj = self.map.object_cache[int(target_x),int(pos.y)]
+                if obj.Contains(Point(target_x,pos.y)):
+                    amount.x = 0
 
             target_y = pos.y + amount.y
             if target_y >= self.map.size.y:
@@ -98,6 +103,11 @@ class Actor(object):
             target_tile_y = self.map.data[int(pos.x)][int(target_y)]
             if target_tile_y.type in game_view.TileTypes.Impassable:
                 amount.y = 0
+            elif (int(pos.x),int(target_y)) in self.map.object_cache:
+                obj = self.map.object_cache[int(pos.x),int(target_y)]
+                if obj.Contains(Point(pos.x,target_y)):
+                    amount.y = 0
+            
 
         self.SetPos(self.pos + amount)
 

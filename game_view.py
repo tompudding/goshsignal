@@ -175,14 +175,15 @@ class ObjectTypes:
 class GameObject(object):
     texture_names = {ObjectTypes.BED_UP   : ('bedup.png'   , Point(0,0)),
                      ObjectTypes.BED_DOWN : ('beddown.png' , Point(0,0)),
-                     ObjectTypes.CAR      : ('car.png'     , Point(0,2)),
+                     ObjectTypes.CAR      : ('car.png'     , Point(0,0)),
                      ObjectTypes.DISH     : ('dish.png'    , Point(0,0))}
     def __init__(self,pos):
-        self.pos = pos
         self.name,self.offset = self.texture_names[self.type]
+        self.pos = pos + self.offset
         self.size = ((globals.atlas.TextureSubimage(self.name).size.to_float())/globals.tile_dimensions)
+        self.tr = self.pos + self.size
         self.quad = drawing.Quad(globals.quad_buffer,tc = globals.atlas.TextureSpriteCoords(self.name))
-        bl        = (pos + self.offset) * globals.tile_dimensions
+        bl        = self.pos * globals.tile_dimensions
         tr        = bl + self.size*globals.tile_dimensions
         print self.name,self.size,bl,tr
         self.quad.SetVertices(bl,tr,1)
@@ -193,6 +194,11 @@ class GameObject(object):
         for x in xrange(bl.x,tr.x):
             for y in xrange(bl.y,tr.y):
                 yield (x,y)
+
+    def Contains(self,p):
+        if p.x >= self.pos.x and p.y >= self.pos.y and p.x < self.tr.x and p.y < self.tr.y:
+            return True
+        return False
 
     def Interact(self,player):
         pass
