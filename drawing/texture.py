@@ -129,6 +129,9 @@ class TextureAtlas(object):
         name = '_'.join(name.split(os.path.sep))
         return self.subimages[name]
 
+    def TextureSubimage(self,name):
+        return self.Subimage(os.path.join(globals.dirs.sprites,name))
+
     def TransformCoord(self,subimage,value):
         value[0] = subimage.pos.x + value[0]*(float(subimage.size.x)/self.texture.width)
         value[1] = subimage.pos.y + value[1]*(float(subimage.size.y)/self.texture.height)

@@ -110,10 +110,13 @@ class TileTypes:
     PLAYER            = 6
     ROAD              = 7
     ROAD_MARKING      = 8
+    CHAINLINK         = 9
+    JODRELL_SIGN      = 10
+    BARRIER           = 11
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN))
     Computers  = set()
-    Impassable = set((WALL,DOOR_CLOSED)) | Computers
+    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER)) | Computers
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
@@ -122,7 +125,11 @@ class TileData(object):
                      TileTypes.WALL          : 'wall.png',
                      TileTypes.DOOR_CLOSED   : 'door_closed.png',
                      TileTypes.DOOR_OPEN     : 'door_open.png',
-                     TileTypes.TILE          : 'tile.png'}
+                     TileTypes.TILE          : 'tile.png',
+                     TileTypes.JODRELL_SIGN  : 'sign.png',
+                     TileTypes.CHAINLINK     : 'chain.png',
+                     TileTypes.BARRIER       : 'barrier.png',
+                     }
     
     def __init__(self,type,pos):
         self.pos  = pos
@@ -131,9 +138,11 @@ class TileData(object):
             self.name = self.texture_names[type]
         except KeyError:
             self.name = self.texture_names[TileTypes.GRASS]
+        #How big are we?
+        self.size = ((globals.atlas.TextureSubimage(self.name).size)/globals.tile_dimensions).to_int()
         self.quad = drawing.Quad(globals.quad_buffer,tc = globals.atlas.TextureSpriteCoords(self.name))
         bl        = pos * globals.tile_dimensions
-        tr        = bl + globals.tile_dimensions
+        tr        = bl + self.size*globals.tile_dimensions
         self.quad.SetVertices(bl,tr,0)
 
 class Door(TileData):
@@ -161,9 +170,12 @@ class GameMap(object):
                      '+' : TileTypes.WALL,
                      'r' : TileTypes.ROAD,
                      'm' : TileTypes.ROAD_MARKING,
-                     'p' : TileTypes.PLAYER,}
+                     'c' : TileTypes.CHAINLINK,
+                     's' : TileTypes.JODRELL_SIGN,
+                     'p' : TileTypes.PLAYER,
+                     'b' : TileTypes.BARRIER,}
     def __init__(self,name):
-        self.size   = Point(120,84)
+        self.size   = Point(120,81)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]
         self.actors = []
         self.doors  = []
@@ -180,7 +192,10 @@ class GameMap(object):
                     #try:
                     if 1:
                         td = TileDataFactory(self,self.input_mapping[tile],Point(x,y))
-                        self.data[x][y] = td
+                        for tile_x in xrange(td.size.x):
+                            for tile_y in xrange(td.size.y):
+                                if self.data[x+tile_x][y+tile_y] == TileTypes.GRASS:
+                                    self.data[x+tile_x][y+tile_y] = td
                         if self.input_mapping[tile] == TileTypes.PLAYER:
                             self.player = actors.Player(self,Point(x+0.2,y))
                             self.actors.append(self.player)

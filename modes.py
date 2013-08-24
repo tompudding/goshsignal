@@ -37,19 +37,21 @@ class Titles(Mode):
         self.stage           = TitleStages.STARTED
         self.handlers        = {TitleStages.STARTED  : self.Startup,
                                 TitleStages.COMPLETE : self.Complete}
-        bl = self.parent.GetRelative(Point(0,0))
-        tr = bl + self.parent.GetRelative(globals.screen)
-        self.blurb_text = ui.TextBox(parent = self.parent,
+        #bl = self.parent.GetRelative(Point(0,0))
+        #tr = bl + self.parent.GetRelative(globals.screen)
+        bl = Point(0.3,0)
+        tr = Point(1,0.6)
+        self.blurb_text = ui.TextBox(parent = globals.screen_root,
                                      bl     = bl         ,
                                      tr     = tr         ,
                                      text   = self.blurb ,
-                                     textType = drawing.texture.TextTypes.GRID_RELATIVE,
-                                     colour = (1,1,1,1),
+                                     textType = drawing.texture.TextTypes.SCREEN_RELATIVE,
+                                     colour = (0,1,0,1),
                                      scale  = 4)
         self.backdrop        = ui.Box(parent = globals.screen_root,
                                       pos    = Point(0,0),
                                       tr     = Point(1,1),
-                                      colour = (0,0,0,0))
+                                      colour = (0,0,0,1))
         self.backdrop.Enable()
 
     def KeyDown(self,key):
@@ -59,7 +61,6 @@ class Titles(Mode):
         self.elapsed = t - self.start
         self.stage = self.handlers[self.stage](t)
         if self.stage == TitleStages.COMPLETE:
-            self.backdrop.Delete()
             self.parent.mode = self.parent.game_mode = GameMode(self.parent)
             self.parent.viewpos.Follow(globals.time,self.parent.map.player)
             #self.parent.StartMusic()
