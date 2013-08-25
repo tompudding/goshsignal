@@ -444,7 +444,11 @@ class WhiteBoard(TileData):
         print 'wb'
         self.quad.Enable()
         globals.game_view.computer = self
-        globals.game_view.SetInfoText('Press ESC to return')
+        if self.type == TileTypes.LAB_WHITEBOARD:
+            hint = 'Hint: you might need a calculator'
+        else:
+            hint = 'Press ESC to return'
+        globals.game_view.SetInfoText(hint)
 
     def KeyDown(self,key):
         pass
