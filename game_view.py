@@ -423,8 +423,8 @@ class Door(TileData):
                 print 'locked!'
 
 class WhiteBoard(TileData):
-    texture_names = {TileTypes.LAB_WHITEBOARD : 'labwb_full.png',
-                     TileTypes.QUARTERS_WHITEBOARD : 'quarterswb_full.png'}
+    fulltexture_names = {TileTypes.LAB_WHITEBOARD : 'labwb_full.png',
+                         TileTypes.QUARTERS_WHITEBOARD : 'quarterswb_full.png'}
     def __init__(self,type,pos):
         super(WhiteBoard,self).__init__(type,pos)
         
