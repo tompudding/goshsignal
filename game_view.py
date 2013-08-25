@@ -533,7 +533,7 @@ class GameMap(object):
         self.AddObject(Bed(Point(62,22)))
         self.AddObject(Car(Point(55,2)))
         self.AddObject(Locker(Point(67,23),'2212',self.parent))
-        self.AddObject(Computer(Point(75,18),terminal.DomsComputer,self.parent))
+        self.AddObject(Computer(Point(75,17),terminal.DomsComputer,self.parent))
         self.AddObject(Computer(Point(38,23),terminal.LabComputer,self.parent))
 
     def AddObject(self,obj):
