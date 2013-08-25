@@ -194,5 +194,7 @@ class GameMode(Mode):
             except IndexError:
                 return
             tile.Interact(self.parent.map.player)
+        elif key == pygame.K_i:
+            self.parent.map.player.inventory.SetScreen()
 
                 

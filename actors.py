@@ -5,6 +5,7 @@ import drawing
 import os
 import game_view
 import random
+import pygame
 
 class Directions:
     UP    = 0
@@ -120,10 +121,154 @@ class Actor(object):
         self.current_sound = random.choice(self.sounds)
         self.current_sound.play()
 
+class Inventory(object):
+    def __init__(self,items,player):
+        self.player = player
+        self.parent = player.map.parent
+        self.screen = ui.Box(parent = globals.screen_root,
+                             pos = Point(0.06,0.1),
+                             tr = Point(0.94,0.9),
+                             colour = (1,1,1,0.6))
+        self.screen.title = ui.TextBox(self.screen,
+                                       bl = Point(0,0.8),
+                                       tr = Point(1,0.99),
+                                       text = 'Inventory',
+                                       textType = drawing.texture.TextTypes.SCREEN_RELATIVE,
+                                       colour = (0,0,0,1),
+                                       scale = 5)
+        self.screen.current_name = ui.TextBox(self.screen,
+                                              bl = Point(0,0),
+                                              tr = Point(1,0.08),
+                                              text = ' ',
+                                              textType = drawing.texture.TextTypes.SCREEN_RELATIVE,
+                                              colour = (1,0,0,1),
+                                              scale = 4,
+                                              alignment = drawing.texture.TextAlignments.CENTRE)
+        self.screen.selected = ui.Box(parent = self.screen,
+                                      pos = Point(0,0),
+                                      tr = Point(0,0),
+                                      colour = drawing.constants.colours.red,
+                                      extra = 2)
+        self.screen.slots = []
+        self.width  = 5
+        self.height = 3
+        box_width = 0.1
+        interbox_width = (1.0-self.width*box_width)/(self.width+1)
+        box_height = 0.2
+        interbox_height = (1.0-self.height*box_height)/(self.height+1)
+        inter = Point(interbox_width,interbox_height)
+        box_size = Point(box_width,box_height)
+        self.selected_coords = []
+        for i in xrange(self.width * self.height):
+            x = i%self.width
+            ypos = i/self.width
+            if ypos >= self.height:
+                break
+            y = self.height-1-ypos
+            bl = Point((interbox_width*(x+1)) + (box_width*x),
+                       (interbox_height*(y+1)) + (box_height*y))
+            tr = bl + box_size
+            box = ui.Box(parent = self.screen,
+                         pos    = bl,
+                         tr     = tr,
+                         colour = (0.4,0.4,0.4,1),extra = 1)
+            self.selected_coords.append( (Point(bl.x,bl.y-0.2*box_height),Point(tr.x,bl.y-0.05*box_height)) )
+            self.screen.slots.append(box)
+        self.items = [item for item in items][:len(self.screen.slots)]
+        if len(items) < len(self.screen.slots):
+            self.items += [None]*(len(self.screen.slots)-len(items))
+        self.SetSelected(0)
+        self.screen.Disable()
+
+    def SetScreen(self):
+        self.screen.Enable()
+        self.parent.computer = self
+        self.current_key = None
+
+    def SetSelected(self,n):
+        if n < 0:
+            n = 0
+        if n > len(self.screen.slots):
+            n = len(self.screen.slots)
+        self.selected = n
+        bl,tr = self.selected_coords[self.selected]
+        self.screen.selected.bottom_left = bl
+        self.screen.selected.top_right = tr
+        self.screen.selected.UpdatePosition()
+        item = self.items[self.selected]
+        if item:
+            name = item.name
+        else:
+            name = 'Empty'
+        print 'name',name
+        self.screen.current_name.SetText(name,(0,0,0,1))
+
+    def KeyDown(self,key):
+        if key in (pygame.K_ESCAPE,):
+            return
+        if key >= pygame.K_KP0 and key <= pygame.K_KP9:
+            key -= (pygame.K_KP0 - pygame.K_0)
+
+        self.current_key = key
+        if key == pygame.K_TAB:
+            return
+        elif key == pygame.K_RIGHT:
+            #do this in the same row
+            row_pos = self.selected%self.width
+            if row_pos+1 < self.width:
+                self.SetSelected(self.selected + 1)
+        elif key == pygame.K_LEFT:
+            row_pos = self.selected%self.width
+            if row_pos != 0:
+                self.SetSelected(self.selected - 1)
+        elif key == pygame.K_UP:
+            col_pos = self.height-1-(self.selected/self.width)
+            if col_pos + 1 < self.height:
+                self.SetSelected(self.selected - self.width)
+        elif key == pygame.K_DOWN:
+            col_pos = self.height-1-(self.selected/self.width)
+            if col_pos != 0:
+                self.SetSelected(self.selected + self.width)
+        elif key == pygame.K_RETURN:
+            if self.current == self.combination:
+                print 'correct!'
+                self.screen.Disable()
+                self.parent.CloseScreen()
+            else:
+                print 'incorrect!'
+        
+    def AdjustSelected(self,diff):
+        print ''.join(self.current)
+        self.current[self.selected] = '%d' % ((int(self.current[self.selected]) + diff)%10)
+        print ''.join(self.current)
+        self.screen.combo.SetText(''.join(self.current),(1,0,0,1))
+
+    def KeyUp(self,key):
+        if key == pygame.K_ESCAPE:
+            self.screen.Disable()
+            self.parent.CloseScreen()
+
+        if self.current_key:
+            self.current_key = None
+
+    def Update(self,t):
+        if not self.current_key:
+            return
+        elif self.current_key == pygame.K_TAB:
+            self.current_key = None
+            return
+
+
 class Player(Actor):
     texture = 'player'
     width = 9
     height = 16
+
+    def __init__(self,*args,**kwargs):
+        super(Player,self).__init__(*args,**kwargs)
+        self.items = []
+        self.inventory = Inventory(self.items,self)
+
 
     # def AdjacentItem(self,item_type):
     #     current_tiles = set((self.pos + corner).to_int() for corner in self.corners)
