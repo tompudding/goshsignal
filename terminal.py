@@ -69,17 +69,18 @@ class Path(object):
         return '/' + '/'.join(self.parts)
 
 class File(object):
-    def __init__(self,path,data):
+    def __init__(self,path,data,handler):
         self.path = path
         self.data = data
         self.filename = self.path.filename
+        self.handler = handler
 
     def lsformat(self):
         return '%5d  %s' % (len(self.data),self.filename)
 
 class Directory(File):
     def __init__(self,path):
-        super(Directory,self).__init__(path,None)
+        super(Directory,self).__init__(path,None,None)
         self.files = []
         self.filename = self.path.filename
 
@@ -108,7 +109,7 @@ class FileSystem(object):
     def __init__(self,files):
         self.root = Directory(Path('/'))
         
-        for path,filename in files.iteritems():
+        for path,(filename,handler) in files.iteritems():
             if filename != None:
                 with open(filename,'rb') as f:
                     data = f.read()
@@ -131,7 +132,7 @@ class FileSystem(object):
             if data == None:
                 new_file = Directory(path)
             else:
-                new_file = File(path,data)
+                new_file = File(path,data,handler)
             current_dir.AddFile(new_file)
         d = self.root
 
@@ -886,16 +887,22 @@ xstrtoumax
 
     def Handle(self,message):
         parts = message.strip().split()
+        output = None
         if not parts:
             self.AddText('$')
             return
         try:
             command = self.commands[parts[0]]
         except KeyError:
-            self.AddTextBuffer('%s : command not found\n' % parts[0])
-            return
-        except:
-            self.AddTextBuffer('%s : bad command' % message)
+            #It's not a built in command, maybe it's a path to a command
+            try:
+                file = self.GetFileData(message.strip().split()[0])
+            except FileSystemException as e:
+                self.AddTextBuffer('%s : bad command\n' % message)
+                return
+            if file.handler:
+                output = file.handler(parts[1:])
+                self.AddTextBuffer(output)
             return
         output = command(parts[1:])
         self.AddTextBuffer(output)
@@ -1025,12 +1032,18 @@ xstrtoumax
         return '%s: %s\n' % (file.filename,out)
 
         
-        
 class DomsComputer(BashComputer):
     Banner = 'This is Dom\'s private diary computer : keep your nose out!\n$'
     home_path = Path('/home/dom')
-    FileSystem = FileSystem({'/home/dom/edit_diary':'edit_diary',
-                             '/usr/share'          : None,
-                             '/tmp'                : None,
-                             '/var/log'            : None,
-                             '/bin/ls'             : 'ls'})
+
+    def __init__(self,*args,**kwargs):
+        self.FileSystem = FileSystem({'/home/dom/edit_diary':('edit_diary',self.edit_diary),
+                                      '/usr/share'          : (None,None),
+                                      '/tmp'                : (None,None),
+                                      '/var/log'            : (None,None),
+                                      '/bin/ls'             : ('ls',self.ls)})
+        super(DomsComputer,self).__init__(*args,**kwargs)
+
+    def edit_diary(self,args):
+        print 'x'
+        return 'hi\n'
