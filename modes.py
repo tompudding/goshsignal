@@ -164,6 +164,7 @@ class GameMode(Mode):
     """This is a bit of a cheat class as I'm rushed. Just pass everything back"""
     def __init__(self,parent):
         self.parent            = parent
+        self.parent.info_box.Enable()
         self.keydownmap = 0
 
     def KeyDown(self,key):

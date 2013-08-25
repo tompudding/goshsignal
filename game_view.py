@@ -275,6 +275,7 @@ class Locker(GameObject):
                 self.parent.CloseScreen()
                 if self.current_player:
                     self.current_player.AddItem(actors.LabKey())
+                self.parent.info_box.text.SetText('You received a Labkey',colour=(1,1,0,1))
                 self.current_player = None
                 
             else:
@@ -296,7 +297,6 @@ class Locker(GameObject):
         self.screen.selected.bottom_left = Point(self.selected*0.25,-0.05)
         self.screen.selected.top_right = Point((self.selected+1)*0.25,0.15)
         self.screen.selected.UpdatePosition()
-            
 
     def KeyUp(self,key):
         if key == pygame.K_ESCAPE:
@@ -313,7 +313,6 @@ class Locker(GameObject):
         elif self.current_key == pygame.K_TAB:
             self.current_key = None
             return
-
 
 class Car(GameObject):
     type = ObjectTypes.CAR
@@ -386,8 +385,6 @@ class Computer(GameObject):
         if t - self.last_keyrepeat > self.key_repeat_time:
             self.terminal.AddKey(self.current_key,repeat=True)
             self.last_keyrepeat = t
-
-    
 
 class Door(TileData):
     def __init__(self,type,pos):
@@ -507,6 +504,19 @@ class GameView(ui.RootElement):
         self.player_direction = Point(0,0)   
         self.game_over = False
         self.computer = None
+        self.info_box = ui.Box(parent = globals.screen_root,
+                               pos = Point(0,0),
+                               tr = Point(1,0.05),
+                               colour = (0,0,0,0.9))
+        self.info_box.text = ui.TextBox(self.info_box,
+                                        bl = Point(0,0),
+                                        tr = Point(1,0.7),
+                                        text = 'Space to interact, I for inventory',
+                                        textType = drawing.texture.TextTypes.SCREEN_RELATIVE,
+                                        colour = (1,1,0,1),
+                                        scale = 3,
+                                        alignment = drawing.texture.TextAlignments.CENTRE)
+        self.info_box.Disable()
         #pygame.mixer.music.load('music.ogg')
         self.music_playing = False
         super(GameView,self).__init__(Point(0,0),globals.screen)
