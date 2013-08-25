@@ -48,6 +48,17 @@ class RomanceNovel(Item):
     description  = 'jim'
     texture_name = 'romance_novel.png'
 
+class LabKey(Item):
+    name         = 'Key to the Laboratory building'
+    description  = 'jim'
+    texture_name = 'labkey.png'
+
+class DishKey(Item):
+    name         = 'Key to the Dish admin building'
+    description  = 'jim'
+    texture_name = 'labkey.png'
+
+
 class Actor(object):
     texture = None
     width = None
@@ -342,3 +353,6 @@ class Player(Actor):
                 continue
             if (actor.pos - self.pos).SquareLength() < 2:
                 return actor
+
+    def AddItem(self,item):
+        self.inventory.AddItem(item)

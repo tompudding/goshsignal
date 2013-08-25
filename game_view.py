@@ -124,9 +124,10 @@ class TileTypes:
     WOOD               = 15
     BATHROOM_TILE      = 16
     LAB_TILE           = 17
-    DOOR_LOCKED        = 18
+    DOOR_LOCKED_LAB    = 18
+    DOOR_LOCKED_DISH   = 19
 
-    Doors      = set((DOOR_CLOSED,DOOR_OPEN,DOOR_LOCKED))
+    Doors      = set((DOOR_CLOSED,DOOR_OPEN,DOOR_LOCKED_LAB,DOOR_LOCKED_DISH))
     Computers  = set()
     Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER)) | Computers
 
@@ -248,6 +249,7 @@ class Locker(GameObject):
         self.screen.Enable()
         self.parent.computer = self
         self.current_key = None
+        self.current_player = player
 
     def KeyDown(self,key):
         if key in (pygame.K_ESCAPE,):
@@ -271,6 +273,10 @@ class Locker(GameObject):
                 print 'correct!'
                 self.screen.Disable()
                 self.parent.CloseScreen()
+                if self.current_player:
+                    self.current_player.AddItem(actors.LabKey())
+                self.current_player = None
+                
             else:
                 print 'incorrect!'
 
@@ -296,6 +302,7 @@ class Locker(GameObject):
         if key == pygame.K_ESCAPE:
             self.screen.Disable()
             self.parent.CloseScreen()
+            self.current_player = None
 
         if self.current_key:
             self.current_key = None
@@ -384,8 +391,13 @@ class Computer(GameObject):
 
 class Door(TileData):
     def __init__(self,type,pos):
-        if type == TileTypes.DOOR_LOCKED:
+        self.keytype = None
+        if type in (TileTypes.DOOR_LOCKED_LAB,TileTypes.DOOR_LOCKED_DISH):
             self.locked = True
+            if type == TileTypes.DOOR_LOCKED_LAB:
+                self.keytype = actors.LabKey
+            else:
+                self.keytype = actors.DishKey
             type = TileTypes.DOOR_CLOSED
         else:
             self.locked = False
@@ -402,8 +414,11 @@ class Door(TileData):
         if not self.locked:
             self.Toggle()
         else:
-            #play locked sound or what have you
-            print 'locked!'
+            if any(isinstance(item,self.keytype) for item in player.inventory.items):
+                self.Toggle()
+            else:
+                #play locked sound or what have you
+                print 'locked!'
 
 def TileDataFactory(map,type,pos):
     if type in TileTypes.Doors:
@@ -419,7 +434,8 @@ class GameMap(object):
                      '+' : TileTypes.WALL,
                      'r' : TileTypes.ROAD,
                      'd' : TileTypes.DOOR_CLOSED,
-                     'L' : TileTypes.DOOR_LOCKED,
+                     'L' : TileTypes.DOOR_LOCKED_LAB,
+                     'x' : TileTypes.DOOR_LOCKED_DISH,
                      'o' : TileTypes.DOOR_OPEN,
                      'm' : TileTypes.ROAD_MARKING,
                      'M' : TileTypes.ROAD_MARKING_HORIZ,

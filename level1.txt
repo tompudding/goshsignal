@@ -37,8 +37,8 @@
      |.................................|                                                                              c
      |.................................|                                                                              c
      |.................................|                                                                              c
-     +----------------------------L----+                                                                              c
-                                     ccccccc cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+     +----------------------------x---+                                                                               c
+                                     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
 
