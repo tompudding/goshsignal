@@ -65,7 +65,7 @@ class Titles(Mode):
         if self.stage == TitleStages.COMPLETE:
             self.parent.mode = self.parent.game_mode = GameMode(self.parent)
             self.parent.viewpos.Follow(globals.time,self.parent.map.player)
-            #self.parent.StartMusic()
+            self.parent.StartMusic()
 
     def Complete(self,t):
         self.backdrop.Delete()

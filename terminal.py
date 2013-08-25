@@ -409,10 +409,21 @@ class SignalComputer(Emulator):
 
     def StartMusic(self):
         pygame.mixer.music.load('beeps.ogg')
+        pygame.mixer.music.set_volume(1.0)
         pygame.mixer.music.play(-1)
 
     def StopMusic(self):
+        if not globals.game_view.music_playing:
+            turnoff = True
+        else:
+            turnoff = False
+        print turnoff
         pygame.mixer.music.stop()
+        globals.game_view.StartMusic()
+        print globals.game_view.music_playing
+        if turnoff:
+            pygame.mixer.music.set_volume(0)
+            globals.game_view.music_playing = False
 
     def ClearScreen(self):
         super(SignalComputer,self).ClearScreen()

@@ -612,9 +612,10 @@ class GameView(ui.RootElement):
             self.dish_door.Toggle()
 
     def StartMusic(self):
-        pass
-        #pygame.mixer.music.play(-1)
-        #self.music_playing = True
+        pygame.mixer.music.load('music.ogg')
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play(-1)
+        self.music_playing = True
 
     def Draw(self):
         #drawing.DrawAll(globals.backdrop_buffer,self.atlas.texture.texture)
@@ -656,6 +657,13 @@ class GameView(ui.RootElement):
         self.mode.KeyDown(key)
 
     def KeyUp(self,key):
+        if key == pygame.K_DELETE:
+            if self.music_playing:
+                self.music_playing = False
+                pygame.mixer.music.set_volume(0)
+            else:
+                self.music_playing = True
+                pygame.mixer.music.set_volume(0.1)
         self.mode.KeyUp(key)
 
     def CloseScreen(self):
