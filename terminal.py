@@ -167,6 +167,7 @@ class Emulator(ui.UIElement):
         self.gameview = gameview
         self.computer = computer
         self.text_buffer = ''
+        self.last = 0
         
         self.size = (self.absolute.size/(globals.text_manager.GetSize(' ',self.scale).to_float())).to_int()
         self.quads = []
@@ -184,10 +185,8 @@ class Emulator(ui.UIElement):
         self.cursor_flash_state = False
         self.current_buffer = []
             
-        self.cursor_entry = Point(0,0)
-        self.cursor_view  = Point(0,0)
-        self.cursor = self.cursor_entry
-        self.saved_buffer = []
+        self.cursor = Point(0,0)
+        self.start = None
         
         self.AddMessage(self.GetBanner())
 
@@ -234,12 +233,19 @@ class Emulator(ui.UIElement):
         for x in xrange(self.size.x):
             for y in xrange(self.size.y):
                 self.quads[x][y].Disable()
+        self.ClearScreen()
 
     def Enable(self):
         super(Emulator,self).Enable()
         for x in xrange(self.size.x):
             for y in xrange(self.size.y):
                 self.quads[x][y].Enable()
+
+    def ClearScreen(self):
+        for x in xrange(self.size.x):
+            for y in xrange(self.size.y):
+                globals.text_manager.SetLetterCoords(self.quads[x][y],' ')
+        self.cursor = Point(0,0)
 
     def Dispatch(self,command):
         pass
@@ -361,6 +367,48 @@ class Emulator(ui.UIElement):
         if userInput:
             self.current_buffer.append(key)
 
+def AlienSignal(t):
+    char = ord('type import universe'[int((t%10)*2)])
+    p = (t*math.pi)/10
+    signal_level = math.sin(p)*math.cos(3*p)
+    return signal_level*((float(char*2)/256)-1) 
+ 
+
+class SignalComputer(Emulator):
+    Banner = ''
+    time_between = 500
+    def __init__(self,*args,**kwargs):
+        super(SignalComputer,self).__init__(*args,**kwargs)
+        self.num_outputted = 0
+    def Update(self,t):
+        if self.start == None:
+            self.start = t
+        self.t = t
+        if (self.t - self.last) > self.time_between:
+            t = float(self.t)/1000
+            message = 't=%5.2f : signal=%10.7f   ' % (t,AlienSignal(t))
+            if (self.num_outputted%2) == 1:
+                message += '\n'
+            self.num_outputted += 1
+            self.AddTextBuffer(message)
+            self.last = self.t
+        if self.text_buffer:
+            self.AddText(self.text_buffer[:100])
+            self.text_buffer = self.text_buffer[100:]
+            if not self.text_buffer:
+                self.current_buffer = []
+            return
+        #print self.t,self.start
+
+    def ClearScreen(self):
+        super(SignalComputer,self).ClearScreen()
+        self.num_outputted = 0
+    def AddKey(self,key,userInput = True,repeat = False):
+        if userInput:
+            return
+        super(SignalComputer,self).AddKey(key,userInput,repeat)
+    
+
 class BashComputer(Emulator):
     def __init__(self,parent,gameview,computer,background,foreground):
         self.commands = {'ls'   : self.ls,
@@ -368,6 +416,7 @@ class BashComputer(Emulator):
                          'pwd'  : self.pwd,
                          'cat'  : self.cat,
                          'file' : self.file,
+                         'import' : self.import_function,
                          'strings' : self.strings}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
         self.current_command = None
@@ -1025,6 +1074,12 @@ xstrtoumax
         except KeyError:
             out = 'data'
         return '%s: %s\n' % (file.filename,out)
+
+    def import_function(self,args):
+        if len(args) == 1 and args[0] == 'universe':
+            globals.game_view.OpenDish()
+            return 'Insufficient signal strength. Opening dish control...\n'
+        return 'import: bad command\n'
 
         
 class DomsComputer(BashComputer):

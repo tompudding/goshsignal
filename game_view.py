@@ -458,7 +458,6 @@ class WhiteBoard(TileData):
     def Update(self,t):
         return
 
-
 def TileDataFactory(map,type,pos):
     if type in TileTypes.Whiteboards:
         return WhiteBoard(type,pos)
@@ -522,6 +521,8 @@ class GameMap(object):
                             self.player = actors.Player(self,Point(x+0.2,y))
                             self.actors.append(self.player)
                         if isinstance(td,Door):
+                            if self.input_mapping[tile] == TileTypes.DOOR_LOCKED_DISH:
+                                parent.dish_door = td
                             self.doors.append(td)
                     #except KeyError:
                     #    raise globals.types.FatalError('Invalid map data')
@@ -534,7 +535,8 @@ class GameMap(object):
         self.AddObject(Car(Point(55,2)))
         self.AddObject(Locker(Point(67,23),'2212',self.parent))
         self.AddObject(Computer(Point(75,17),terminal.DomsComputer,self.parent))
-        self.AddObject(Computer(Point(38,23),terminal.LabComputer,self.parent))
+        self.AddObject(Computer(Point(39,23),terminal.LabComputer,self.parent))
+        self.AddObject(Computer(Point(36,23),terminal.SignalComputer,self.parent))
 
     def AddObject(self,obj):
         self.object_list.append(obj)
@@ -544,6 +546,7 @@ class GameMap(object):
 
 class GameView(ui.RootElement):
     def __init__(self):
+        self.dish_door = None
         self.atlas = globals.atlas = drawing.texture.TextureAtlas('tiles_atlas_0.png','tiles_atlas.txt')
         self.map = GameMap('level1.txt',self)
         self.map.world_size = self.map.size * globals.tile_dimensions
@@ -575,6 +578,12 @@ class GameView(ui.RootElement):
 
     def SetInfoText(self,text):
         self.info_box.text.SetText(text,colour=(1,1,0,1))
+
+    def OpenDish(self):
+        print self.dish_door
+        if self.dish_door:
+            print 'toggling jim'
+            self.dish_door.Toggle()
 
     def StartMusic(self):
         pass
