@@ -22,6 +22,7 @@ class Item(object):
         self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.atlas.TextureTextureCoords(self.texture_name))
         self.quad.SetTextureCoordinates(globals.atlas.TextureTextureCoords(self.texture_name))
         self.quad.Disable()
+        self.sound = getattr(globals.sounds,self.sound)
 
     def Disable(self):
         if self.enabled:
@@ -40,30 +41,31 @@ class Item(object):
         #self.Enable()
 
     def Describe(self):
-        print self.name
-        #play sound?
+        globals.sounds.PlayVoice(self.sound)
 
 class RomanceNovel(Item):
     name         = 'Well thumbed romance novel'
     description  = 'jim'
     texture_name = 'romance_novel.png'
+    sound        = 'romance'
 
 class LabKey(Item):
     name         = 'Key to the Laboratory building'
     description  = 'jim'
     texture_name = 'labkey.png'
+    sound        = 'keycard'
 
 class DishKey(Item):
     name         = 'Key to the Dish admin building'
     description  = 'jim'
     texture_name = 'labkey.png'
+    sounds       = 'keycard'
 
 
 class Actor(object):
     texture = None
     width = None
     height = None
-    sounds = None
     def __init__(self,map,pos):
         self.map  = map
         self.dirsa = ((Directions.UP   ,'back' ),
@@ -159,12 +161,6 @@ class Actor(object):
 
     def GetPos(self):
         return self.pos
-    
-    def Converse(self):
-        if self.current_sound:
-            self.current_sound.stop()
-        self.current_sound = random.choice(self.sounds)
-        self.current_sound.play()
 
 class Inventory(object):
     def __init__(self,items,player):

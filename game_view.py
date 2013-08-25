@@ -217,12 +217,18 @@ class Dish(GameObject):
     type = ObjectTypes.DISH
 
 class Bed(GameObject):
+    num = 0
     def __init__(self,pos,direction = 'up'):
+        self.sound = getattr(globals.sounds,'bed%d' % (self.num+1))
+        Bed.num += 1
         if direction == 'up':
             self.type = ObjectTypes.BED_UP
         else:
             self.type = ObjectTypes.BED_DOWN
         super(Bed,self).__init__(pos)
+        
+    def Interact(self,player):
+        globals.sounds.PlayVoice(self.sound)
 
 class Locker(GameObject):
     type = ObjectTypes.LOCKER
@@ -281,6 +287,7 @@ class Locker(GameObject):
                 self.parent.CloseScreen()
                 if self.current_player:
                     self.current_player.AddItem(actors.LabKey())
+                    globals.sounds.PlayVoice(globals.sounds.getkey)
                 self.parent.SetInfoText('You recieved a LabKey')
                 self.current_player = None
                 
@@ -323,7 +330,7 @@ class Locker(GameObject):
 class Car(GameObject):
     type = ObjectTypes.CAR
     def Interact(self,player):
-        print 'can\'t leave yet'
+        globals.sounds.PlayVoice(globals.sounds.cantleave)
 
 class Computer(GameObject):
     key_repeat_time = 40
@@ -352,6 +359,7 @@ class Computer(GameObject):
                                                computer   = self,
                                                background = drawing.constants.colours.black,
                                                foreground = drawing.constants.colours.green)
+        self.terminal.StartMusic()
         #else:
         #    self.terminal.Enable()
         self.current_key = None
@@ -411,8 +419,12 @@ class Door(TileData):
     def Toggle(self):
         if self.type == TileTypes.DOOR_CLOSED:
             self.type = TileTypes.DOOR_OPEN
+            globals.sounds.dooropen.play()
+            if self.keytype == actors.LabKey:
+                globals.sounds.PlayVoice(globals.sounds.lab)
         else:
             self.type = TileTypes.DOOR_CLOSED
+            globals.sounds.doorclosed.play()
         self.quad.SetTextureCoordinates(globals.atlas.TextureSpriteCoords(self.texture_names[self.type]))
 
     def Interact(self,player):
@@ -424,7 +436,8 @@ class Door(TileData):
                 globals.game_view.SetInfoText('You used "%s"' % self.keytype.name)
             else:
                 #play locked sound or what have you
-                print 'locked!'
+                #print 'locked!'
+                globals.sounds.PlayVoice(globals.sounds.locked)
 
 class WhiteBoard(TileData):
     fulltexture_names = {TileTypes.LAB_WHITEBOARD : 'labwb_full.png',
@@ -444,12 +457,16 @@ class WhiteBoard(TileData):
 
     def Interact(self,player):
         print 'wb'
+        if player.pos.y > self.pos.y:
+            return
         self.quad.Enable()
         globals.game_view.computer = self
         if self.type == TileTypes.LAB_WHITEBOARD:
             hint = 'Hint: you might need a calculator'
+            globals.sounds.PlayVoice(globals.sounds.lab_wb)
         else:
             hint = 'Press ESC to return'
+            globals.sounds.PlayVoice(globals.sounds.quarters_wb)
         globals.game_view.SetInfoText(hint)
 
     def KeyDown(self,key):
@@ -642,5 +659,7 @@ class GameView(ui.RootElement):
         self.mode.KeyUp(key)
 
     def CloseScreen(self):
+        if isinstance(self.computer,Computer):
+            self.computer.terminal.StopMusic()
         self.computer = None
         self.SetInfoText(' ')

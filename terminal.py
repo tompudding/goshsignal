@@ -197,6 +197,12 @@ class Emulator(ui.UIElement):
     def GameOver(self):
         return False
 
+    def StartMusic(self):
+        pass
+
+    def StopMusic(self):
+        pass
+
     def Update(self,t):
         self.t = t
         if self.text_buffer:
@@ -400,6 +406,13 @@ class SignalComputer(Emulator):
                 self.current_buffer = []
             return
         #print self.t,self.start
+
+    def StartMusic(self):
+        pygame.mixer.music.load('beeps.ogg')
+        pygame.mixer.music.play(-1)
+
+    def StopMusic(self):
+        pygame.mixer.music.stop()
 
     def ClearScreen(self):
         super(SignalComputer,self).ClearScreen()
@@ -1039,6 +1052,8 @@ xstrtoumax
             file = self.GetFileData(path)
         except FileSystemException as e:
             return 'cat: ' + str(e)
+        if file.filename == 'notes':
+            globals.sounds.PlayVoice(globals.sounds.holy)
 
         return '%s\n' % file.data
 
@@ -1079,6 +1094,7 @@ xstrtoumax
     def import_function(self,args):
         if len(args) == 1 and args[0] == 'universe':
             globals.game_view.OpenDish()
+            globals.sounds.dooropen.play()
             return 'Insufficient signal strength. Opening dish control...\n'
         return 'import: bad command\n'
 
@@ -1177,6 +1193,13 @@ class FinalComputer(BashComputer):
                                       '/bin/ls'             : ('ls',self.ls)})
         self.end = None
         super(FinalComputer,self).__init__(*args,**kwargs)
+
+    def StartMusic(self):
+        pygame.mixer.music.load('beeps.ogg')
+        pygame.mixer.music.play(-1)
+
+    def StopMusic(self):
+        pygame.mixer.music.stop()
 
     def import_function(self,args):
         if len(args) == 1 and args[0] == 'universe':

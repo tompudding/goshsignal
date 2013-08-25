@@ -38,6 +38,7 @@ class Titles(Mode):
         self.stage           = TitleStages.STARTED
         self.handlers        = {TitleStages.STARTED  : self.Startup,
                                 TitleStages.COMPLETE : self.Complete}
+        globals.sounds.PlayVoice(globals.sounds.intro)
         #bl = self.parent.GetRelative(Point(0,0))
         #tr = bl + self.parent.GetRelative(globals.screen)
         bl = Point(0.3,0)
