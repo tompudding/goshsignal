@@ -132,6 +132,9 @@ class TextureAtlas(object):
     def TextureSubimage(self,name):
         return self.Subimage(os.path.join(globals.dirs.sprites,name))
 
+    def TextureTextureSubimage(self,name):
+        return self.Subimage(os.path.join(globals.dirs.textures,name))
+
     def TransformCoord(self,subimage,value):
         value[0] = subimage.pos.x + value[0]*(float(subimage.size.x)/self.texture.width)
         value[1] = subimage.pos.y + value[1]*(float(subimage.size.y)/self.texture.height)
@@ -150,6 +153,9 @@ class TextureAtlas(object):
 
     def TextureSpriteCoords(self,subimage):
         return self.TextureCoords(os.path.join(globals.dirs.sprites,subimage))
+
+    def TextureTextureCoords(self,subimage):
+        return self.TextureCoords(os.path.join(globals.dirs.textures,subimage))
 
 class PetsciiAtlas(TextureAtlas):
     """

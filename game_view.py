@@ -506,7 +506,6 @@ class GameView(ui.RootElement):
         #self.music_playing = True
 
     def Draw(self):
-        drawing.ResetState()
         #drawing.DrawAll(globals.backdrop_buffer,self.atlas.texture.texture)
         drawing.ResetState()
         drawing.Translate(-self.viewpos.pos.x,-self.viewpos.pos.y,0)

@@ -13,6 +13,38 @@ class Directions:
     RIGHT = 2
     LEFT  = 3
 
+class Items:
+    ROMANCE_NOVEL = 1
+
+class Item(object):
+    item_names    = {Items.ROMANCE_NOVEL : 'Well thumbed romance novel'}
+    texture_names = {Items.ROMANCE_NOVEL : 'romance_novel.png'}
+    def __init__(self,type,description,sound):
+        self.name = self.item_names[type]
+        self.description = description
+        self.sound = sound
+        self.enabled = False
+        self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.screen_atlas.TextureTextureCoords(self.name))
+        self.quad.SetTextureCoordinates(globals.screen_atlas.TextureTextureCoords(self.texture_names[self.name]))
+        self.quad.Disable()
+
+    def Disable(self):
+        if self.enabled:
+            self.quad.Disable()
+            self.enabled = False
+
+    def Enable(self):
+        if not self.enabled:
+            self.quad.Enable()
+            self.enabled = True
+
+    def SetCoords(self,bl,tr):
+        self.quad.SetVertices(bl,tr,drawing.constants.DrawLevels.ui + 800)
+        self.Enable()
+
+    def Describe(self):
+        print self.name
+        #play sound?
 
 class Actor(object):
     texture = None
@@ -182,6 +214,9 @@ class Inventory(object):
 
     def SetScreen(self):
         self.screen.Enable()
+        for item in self.items:
+            if item:
+                item.Enable()
         self.parent.computer = self
         self.current_key = None
 
@@ -230,12 +265,9 @@ class Inventory(object):
             if col_pos != 0:
                 self.SetSelected(self.selected + self.width)
         elif key == pygame.K_RETURN:
-            if self.current == self.combination:
-                print 'correct!'
-                self.screen.Disable()
-                self.parent.CloseScreen()
-            else:
-                print 'incorrect!'
+            item = self.items[self.selected]
+            if item:
+                item.Describe()
         
     def AdjustSelected(self,diff):
         print ''.join(self.current)
@@ -244,8 +276,11 @@ class Inventory(object):
         self.screen.combo.SetText(''.join(self.current),(1,0,0,1))
 
     def KeyUp(self,key):
-        if key == pygame.K_ESCAPE:
+        if key == pygame.K_ESCAPE or key == pygame.K_i:
             self.screen.Disable()
+            for item in self.items:
+                if item:
+                    item.Disable()
             self.parent.CloseScreen()
 
         if self.current_key:
@@ -257,6 +292,12 @@ class Inventory(object):
         elif self.current_key == pygame.K_TAB:
             self.current_key = None
             return
+
+    def AddItem(self,item):
+        i = len(self.items)
+        self.items.append(item)
+        item.SetCoords(self.screen.slots[i].absolute.bottom_left,self.screen.slots[i].absolute.bottom_right)
+        self.screen.slots[i].Delete()
 
 
 class Player(Actor):
