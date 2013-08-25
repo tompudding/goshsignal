@@ -22,3 +22,4 @@ resource/sprites/sign.png:tiles_atlas_0.png:260:1008.0:64:16
 resource/sprites/tile.png:tiles_atlas_0.png:324:1008.0:16:16
 resource/sprites/wall.png:tiles_atlas_0.png:340:1008.0:16:16
 resource/sprites/wood.png:tiles_atlas_0.png:527:864.0:64:64
+resource/textures/romance_novel.png:tiles_atlas_0.png:591:896.0:32:32

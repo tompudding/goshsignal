@@ -21,7 +21,7 @@ class Texture(object):
     """ Load a file into a gltexture and store that texture for later use """
     def __init__(self,filename):
         #filename = os.path.join(globals.dirs.resource,filename)
-        if filename not in cache:
+        if 1 and filename not in cache:
             with open(filename,'rb') as f:
                 self.textureSurface = pygame.image.load(f)
             self.textureData = pygame.image.tostring(self.textureSurface, 'RGBA', 1)

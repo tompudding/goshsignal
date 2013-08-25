@@ -292,7 +292,7 @@ class UIRoot(RootElement):
         super(UIRoot,self).__init__(*args,**kwargs)
         self.drawable_children = {}
         self.updateable_children = {}
-        self.atlas = globals.screen_atlas = drawing.texture.TextureAtlas('screen_atlas_0.png','screen_atlas.txt')
+        #self.atlas = globals.screen_atlas = drawing.texture.TextureAtlas('tiles_atlas_0.png','screen_atlas.txt')
 
     def Draw(self):
         glDisable(GL_TEXTURE_2D)
@@ -307,8 +307,9 @@ class UIRoot(RootElement):
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         for item in self.drawable_children:
             item.Draw()
-        glLoadIdentity()
-        drawing.opengl.DrawAll(globals.screen_texture_buffer,self.atlas.texture.texture)
+        drawing.ResetState()
+        drawing.DrawAll(globals.screen_texture_buffer,globals.atlas.texture.texture)
+        
 
     def Update(self,t):
         #Would it be faster to make a list of items to remove and then remove them, rather than build a new list?

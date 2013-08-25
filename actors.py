@@ -17,15 +17,10 @@ class Items:
     ROMANCE_NOVEL = 1
 
 class Item(object):
-    item_names    = {Items.ROMANCE_NOVEL : 'Well thumbed romance novel'}
-    texture_names = {Items.ROMANCE_NOVEL : 'romance_novel.png'}
-    def __init__(self,type,description,sound):
-        self.name = self.item_names[type]
-        self.description = description
-        self.sound = sound
+    def __init__(self):
         self.enabled = False
-        self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.screen_atlas.TextureTextureCoords(self.name))
-        self.quad.SetTextureCoordinates(globals.screen_atlas.TextureTextureCoords(self.texture_names[self.name]))
+        self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.atlas.TextureTextureCoords(self.texture_name))
+        self.quad.SetTextureCoordinates(globals.atlas.TextureTextureCoords(self.texture_name))
         self.quad.Disable()
 
     def Disable(self):
@@ -40,11 +35,18 @@ class Item(object):
 
     def SetCoords(self,bl,tr):
         self.quad.SetVertices(bl,tr,drawing.constants.DrawLevels.ui + 800)
-        self.Enable()
+        if not self.enabled:
+            self.Disable()
+        #self.Enable()
 
     def Describe(self):
         print self.name
         #play sound?
+
+class RomanceNovel(Item):
+    name         = 'Well thumbed romance novel'
+    description  = 'jim'
+    texture_name = 'romance_novel.png'
 
 class Actor(object):
     texture = None
@@ -160,7 +162,7 @@ class Inventory(object):
         self.screen = ui.Box(parent = globals.screen_root,
                              pos = Point(0.06,0.1),
                              tr = Point(0.94,0.9),
-                             colour = (1,1,1,0.6))
+                             colour = (0.8,0.8,0.8,0.6))
         self.screen.title = ui.TextBox(self.screen,
                                        bl = Point(0,0.8),
                                        tr = Point(1,0.99),
@@ -211,6 +213,7 @@ class Inventory(object):
             self.items += [None]*(len(self.screen.slots)-len(items))
         self.SetSelected(0)
         self.screen.Disable()
+        self.num_items = 0
 
     def SetScreen(self):
         self.screen.Enable()
@@ -294,10 +297,11 @@ class Inventory(object):
             return
 
     def AddItem(self,item):
-        i = len(self.items)
-        self.items.append(item)
-        item.SetCoords(self.screen.slots[i].absolute.bottom_left,self.screen.slots[i].absolute.bottom_right)
-        self.screen.slots[i].Delete()
+        self.items[self.num_items] = item
+        item.SetCoords(self.screen.slots[self.num_items].absolute.bottom_left,self.screen.slots[self.num_items].absolute.top_right)
+        self.screen.slots[self.num_items].Delete()
+        self.num_items += 1
+        self.SetSelected(self.selected)
 
 
 class Player(Actor):
@@ -309,6 +313,7 @@ class Player(Actor):
         super(Player,self).__init__(*args,**kwargs)
         self.items = []
         self.inventory = Inventory(self.items,self)
+        self.inventory.AddItem(RomanceNovel())
 
 
     # def AdjacentItem(self,item_type):
