@@ -17,7 +17,7 @@
                         c    |.........|                           c
                         c    |.........|                           c
                         c    |.........|                           c
-                        c    +----x----+                           c
+                        c    +----x----+   p                       c
                         c            ccccccccccccccccccccccccccccccc
                         c
                         c
@@ -44,7 +44,7 @@
                                                c      rrrmrrr      c
                                                c      rrrrrrr      c
                                                c      rrrmrrr      c
-                                               c      rrrprrr      c
+                                               c      rrr rrr      c
                                                c      rrrmrrr      c
                                                c      rrrrrrr      c
                                                c      rrrmrrr      c

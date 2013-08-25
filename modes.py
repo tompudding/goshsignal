@@ -77,7 +77,7 @@ class Titles(Mode):
         return TitleStages.STARTED
 
 class GameOver(Mode):
-    blurb = "GAME OVER"
+    blurb = "Well done player, you've realised the true nature of the universe and re-united with your friends in the outer-verse. Or something. Hooray!"
     def __init__(self,parent):
         self.parent          = parent
         self.blurb           = self.blurb
@@ -91,8 +91,8 @@ class GameOver(Mode):
                                       tr     = Point(1,1),
                                       colour = (0,0,0,1))
         
-        bl = self.parent.GetRelative(Point(0,0))
-        tr = bl + self.parent.GetRelative(globals.screen)
+        bl = Point(0,0)
+        tr = Point(1,0.7)
         self.blurb_text = ui.TextBox(parent = globals.screen_root,
                                      bl     = bl         ,
                                      tr     = tr         ,

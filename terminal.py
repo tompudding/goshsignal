@@ -1012,13 +1012,18 @@ xstrtoumax
         path = args[0]
         if path[0] == '/':
             #absolute
-            self.cwd = Path(path)
+            path = Path(path)
         else:
-            try:
-                a = self.cwd.Extend(Path(path,keepRelative = True))
-                self.cwd = a
-            except:
-                return 'invalid path\n'
+            path = self.cwd.Extend(Path(path,keepRelative = True))
+
+        try:
+            file = self.FileSystem.GetFile(path)
+        except InvalidPath:
+            return 'Invalid Path\n'
+        except NoSuchFile:
+            return 'No such file\n'
+
+        self.cwd = path
         return '\n'
 
     def pwd(self,args):
