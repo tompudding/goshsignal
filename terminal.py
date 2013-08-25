@@ -52,6 +52,8 @@ class Path(object):
         if self.parts == []:
             self.parts = ['/']
             self.filename = '/'
+        elif self.filename == '..':
+            self.filename = self.parts[-1]
         self.parts = tuple(self.parts)
 
     def Add(self,extra):
@@ -299,7 +301,6 @@ class Emulator(ui.UIElement):
                 self.current_command = None
                 self.AddTextBuffer('\n')
                 return
-            print 'a'
             self.text_buffer = ''
             self.AddTextBuffer('\n')
         if userInput and not repeat:
@@ -990,23 +991,6 @@ xstrtoumax
             return 'cat: ' + str(e)
 
         return '%s\n' % file.data
-    
-    def file(self,args):
-        args = [arg for arg in args if arg and arg[0] != '-']
-        if len(args) == 0:
-            return '\n'
-        path = args[0]
-        try:
-            file = self.GetFileData(path)
-        except FileSystemException as e:
-            return 'file: ' + str(e)
-
-        h = hashlib.sha1(file.data).hexdigest()
-        try:
-            out = self.file_sigs[h]
-        except KeyError:
-            out = 'data'
-        return '%s: %s\n' % (file.filename,out)
 
     def file(self,args):
         args = [arg for arg in args if arg and arg[0] != '-']
@@ -1080,17 +1064,19 @@ class LabComputer(BashComputer):
              'anonymous' : (''        , Path('/home/anonymous'))}
 
     def __init__(self,*args,**kwargs):
-        self.FileSystem = FileSystem({'/usr/share'          : (None,None),
-                                      '/tmp'                : (None,None),
-                                      '/var/log'            : (None,None),
-                                      '/home/dom/'          : (None,None),
-                                      '/home/admin'         : (None,None),
-                                      '/login'              : (None,None),
-                                      '/home/guest'         : (None,None),
-                                      '/home/anonymous'     : (None,None),
-                                      '/home/guest'         : (None,None),
-                                      '/root'               : (None,None),
-                                      '/bin/ls'             : ('ls',self.ls)})
+        self.FileSystem = FileSystem({'/usr/share'               : (None,None),
+                                      '/tmp'                     : (None,None),
+                                      '/var/log'                 : (None,None),
+                                      '/home/dom/'               : (None,None),
+                                      '/home/admin'              : (None,None),
+                                      '/home/drbabbage/notes'    : ('babbage_notes',None),
+                                      '/home/drbabbage/analysis' : ('babbage_analysis',self.analysis),
+                                      '/login'                   : (None,None),
+                                      '/home/guest'              : (None,None),
+                                      '/home/anonymous'          : (None,None),
+                                      '/home/guest'              : (None,None),
+                                      '/root'                    : (None,None),
+                                      '/bin/ls'                  : ('ls',self.ls)})
         super(LabComputer,self).__init__(*args,**kwargs)
         self.current_command = self.login
         self.login_username = ''
@@ -1119,3 +1105,6 @@ class LabComputer(BashComputer):
             else:
                 self.login_mode = 0
                 return 'Invalid password\nUsername: '
+            
+    def analysis(self,args,initial = True):
+        return 'analyse!\n'
