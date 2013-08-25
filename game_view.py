@@ -181,6 +181,7 @@ class ObjectTypes:
     COMPUTER = 6
 
 class GameObject(object):
+    level = 1
     texture_names = {ObjectTypes.BED_UP   : ('bedup.png'   , Point(0,0)),
                      ObjectTypes.BED_DOWN : ('beddown.png' , Point(0,0)),
                      ObjectTypes.CAR      : ('car.png'     , Point(0,0)),
@@ -195,7 +196,7 @@ class GameObject(object):
         self.quad = drawing.Quad(globals.quad_buffer,tc = globals.atlas.TextureSpriteCoords(self.name))
         bl        = self.pos * globals.tile_dimensions
         tr        = bl + self.size*globals.tile_dimensions
-        self.quad.SetVertices(bl,tr,1)
+        self.quad.SetVertices(bl,tr,self.level)
 
     def CoveredTiles(self):
         bl = (self.pos + self.offset).to_int()
@@ -328,6 +329,7 @@ class Computer(GameObject):
     key_repeat_time = 40
     initial_key_repeat = 300
     type = ObjectTypes.COMPUTER
+    level = 10
     def __init__(self,pos,terminal_type,parent):
         super(Computer,self).__init__(pos)
         self.terminal = None
@@ -534,13 +536,16 @@ class GameMap(object):
                 if y < 0:
                     break
 
-        self.AddObject(Dish(Point(42,30)))
+        self.AddObject(Dish(Point(42,31)))
         self.AddObject(Bed(Point(62,22)))
+        self.AddObject(Bed(Point(71,22)))
+        self.AddObject(Bed(Point(62,17),direction='down'))
         self.AddObject(Car(Point(55,2)))
         self.AddObject(Locker(Point(67,23),'2212',self.parent))
         self.AddObject(Computer(Point(75,17),terminal.DomsComputer,self.parent))
         self.AddObject(Computer(Point(39,23),terminal.LabComputer,self.parent))
         self.AddObject(Computer(Point(36,23),terminal.SignalComputer,self.parent))
+        self.AddObject(Computer(Point(50,31),terminal.FinalComputer,self.parent))
 
     def AddObject(self,obj):
         self.object_list.append(obj)

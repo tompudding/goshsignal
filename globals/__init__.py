@@ -11,3 +11,4 @@ dragging              = None
 player_config         = None
 screen_root           = None
 time                  = 0
+zoom_scale            = None

@@ -238,7 +238,7 @@ class TextManager(object):
         return out
     
     def Draw(self):
-        glLoadIdentity()
+        opengl.ResetState()
         opengl.DrawAll(self.quads,self.atlas.texture.texture)
 
     def Purge(self):

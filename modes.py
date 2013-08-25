@@ -28,6 +28,7 @@ class TitleStages(object):
     TEXT     = 2
     SCROLL   = 3
     WAIT     = 4
+    ZOOM     = 5
 
 class Titles(Mode):
     blurb = "The GOSH signal"
@@ -80,13 +81,14 @@ class GameOver(Mode):
         self.parent          = parent
         self.blurb           = self.blurb
         self.blurb_text      = None
-        self.handlers        = {TitleStages.TEXT    : self.TextDraw,
-                                TitleStages.SCROLL  : self.Wait,
-                                TitleStages.WAIT    : self.Wait}
+        self.handlers        = {TitleStages.ZOOM   : self.Zoom,
+                                TitleStages.TEXT   : self.TextDraw,
+                                TitleStages.SCROLL : self.Wait,
+                                TitleStages.WAIT   : self.Wait}
         self.backdrop        = ui.Box(parent = globals.screen_root,
                                       pos    = Point(0,0),
                                       tr     = Point(1,1),
-                                      colour = (0,0,0,0.6))
+                                      colour = (0,0,0,1))
         
         bl = self.parent.GetRelative(Point(0,0))
         tr = bl + self.parent.GetRelative(globals.screen)
@@ -99,7 +101,7 @@ class GameOver(Mode):
 
         self.start = None
         self.blurb_text.EnableChars(0)
-        self.stage = TitleStages.TEXT
+        self.stage = TitleStages.ZOOM
         self.played_sound = False
         self.skipped_text = False
         self.letter_duration = 20
@@ -116,6 +118,19 @@ class GameOver(Mode):
             raise sys.exit('Come again soon!')
 
     def Wait(self,t):
+        return self.stage
+
+    def Zoom(self,t):
+        if globals.zoom_scale == None:
+            globals.zoom_scale = 1.0
+        globals.zoom_scale = 1+(10*(float(self.elapsed)/3000))
+        if self.elapsed > 3000:
+            print 'done zoom'
+            globals.game_view.computer.screen.Disable()
+            globals.game_view.CloseScreen()
+            globals.zoom_scale = None
+            self.start = t
+            return TitleStages.TEXT
         return self.stage
 
     def SkipText(self):

@@ -1,5 +1,5 @@
 import drawing
-
+import globals 
 from OpenGL.arrays import numpymodule
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -29,6 +29,9 @@ def Init(w,h):
 
 def ResetState():
     glLoadIdentity()
+    if globals.zoom_scale != None:
+        #print globals.zoom_scale
+        Scale(globals.zoom_scale,globals.zoom_scale,1)
 
 def Translate(x,y,z):
     glTranslatef(x,y,z)

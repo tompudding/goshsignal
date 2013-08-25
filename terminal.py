@@ -3,6 +3,7 @@ import random,numpy,cmath,math,pygame
 import hashlib
 import string
 import sqlite3
+import modes
 
 import ui,globals,drawing,os,copy
 from globals.types import Point
@@ -1163,3 +1164,25 @@ class LabComputer(BashComputer):
             
     def analysis(self,args,initial = True):
         return 'analyse!\n'
+
+
+class FinalComputer(BashComputer):
+    Banner = 'Greetings human, you know what to type\n$'
+    home_path = Path('/home/dom')
+
+    def __init__(self,*args,**kwargs):
+        self.FileSystem = FileSystem({'/usr/share'          : (None,None),
+                                      '/tmp'                : (None,None),
+                                      '/var/log'            : (None,None),
+                                      '/bin/ls'             : ('ls',self.ls)})
+        self.end = None
+        super(FinalComputer,self).__init__(*args,**kwargs)
+
+    def import_function(self,args):
+        if len(args) == 1 and args[0] == 'universe':
+            print 'finished!'
+            globals.game_view.GameOver()
+            return 'Nobody can be told exactly what it is, you have to see it for yourself...\n'
+            #globals.game_view.OpenDish()
+            #return 'Insufficient signal strength. Opening dish control...\n'
+        return 'import: bad command\n'

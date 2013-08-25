@@ -1,24 +1,24 @@
-                        c            cccccccccccccccccccccccccccccccccccccccccccccccc
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c            c                                              c
-                        c    +--------d+                                            c
-                        c    |.........|                                            c
-                        c    |.........|                                            c
-                        c    |.........|                                            c
-                        c    +----x----+                                            c
-                        c            cccccccccccccccccccccccccccccccccccccccccccccccc
+                        c            ccccccccccccccccccccccccccccccc
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c    +--------d+                           c
+                        c    |.........|                           c
+                        c    |.........|                           c
+                        c    |.........|                           c
+                        c    +----x----+                           c
+                        c            ccccccccccccccccccccccccccccccc
                         c
                         c
                         c          +-------W--+----+         +---3--------+---+ 
@@ -26,7 +26,7 @@
                         c          |l.l.l.l.l.|....|         |............|ttt| 
                         c          |..........|....|         |............|ttt| 
                         c          |l.l.l.l.l.|....|         |w...w...w...+-d-+ 
-                        c          |......p...|....|         |................| 
+                        c          |..........|....|         |................| 
                         c          |l.l.l.l.l.+d+..|         |................| 
                         c          |............|..|         |................| 
                         c          |l.l.l.l.l.l.|..|         |w...w...w...w...| 
@@ -44,7 +44,7 @@
                                                c      rrrmrrr      c
                                                c      rrrrrrr      c
                                                c      rrrmrrr      c
-                                               c      rrr rrr      c
+                                               c      rrrprrr      c
                                                c      rrrmrrr      c
                                                c      rrrrrrr      c
                                                c      rrrmrrr      c
