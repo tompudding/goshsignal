@@ -179,7 +179,8 @@ class GameObject(object):
                      ObjectTypes.BED_DOWN : ('beddown.png' , Point(0,0)),
                      ObjectTypes.CAR      : ('car.png'     , Point(0,0)),
                      ObjectTypes.DISH     : ('dish.png'    , Point(0,0)),
-                     ObjectTypes.COMPUTER : ('computer.png', Point(0,0))}
+                     ObjectTypes.COMPUTER : ('computer.png', Point(0,0)),
+                     ObjectTypes.LOCKER   : ('locker.png',   Point(0,0))}
     def __init__(self,pos):
         self.name,self.offset = self.texture_names[self.type]
         self.pos = pos + self.offset
@@ -218,6 +219,94 @@ class Bed(GameObject):
 
 class Locker(GameObject):
     type = ObjectTypes.LOCKER
+    def __init__(self,pos,combination,parent):
+        super(Locker,self).__init__(pos)
+        self.combination = [c for c in combination[:4]]
+        self.parent = parent
+        self.screen = ui.Box(parent = globals.screen_root,
+                             pos = Point(0.415,0.465),
+                             tr = Point(0.585,0.54),
+                             colour = drawing.constants.colours.white)
+        self.current = ['0','0','0','0']
+        self.screen.combo = ui.TextBox(parent = self.screen,
+                                       bl     = Point(0,0) ,
+                                       tr     = Point(1,1) ,
+                                       text   = ''.join(self.current) ,
+                                       textType = drawing.texture.TextTypes.SCREEN_RELATIVE,
+                                       colour = (0,0,0,1),
+                                       scale  = 8)
+        self.selected = 0
+        self.screen.selected = ui.Box(parent = self.screen,
+                                      pos = Point(0,-0.05),
+                                      tr = Point(0.25,0.15),
+                                      colour = drawing.constants.colours.red,
+                                      extra = 2)
+        self.screen.Disable()
+
+    def Interact(self,player):
+        print 'locker'
+        self.screen.Enable()
+        self.parent.computer = self
+        self.current_key = None
+
+    def KeyDown(self,key):
+        if key in (pygame.K_ESCAPE,):
+            return
+        if key >= pygame.K_KP0 and key <= pygame.K_KP9:
+            key -= (pygame.K_KP0 - pygame.K_0)
+
+        self.current_key = key
+        if key == pygame.K_TAB:
+            return
+        elif key == pygame.K_RIGHT:
+            self.SetSelected(self.selected + 1)
+        elif key == pygame.K_LEFT:
+            self.SetSelected(self.selected - 1)
+        elif key == pygame.K_UP:
+            self.AdjustSelected(1)
+        elif key == pygame.K_DOWN:
+            self.AdjustSelected(-1)
+        elif key == pygame.K_RETURN:
+            if self.current == self.combination:
+                print 'correct!'
+                self.screen.Disable()
+                self.parent.CloseScreen()
+            else:
+                print 'incorrect!'
+
+        
+    def AdjustSelected(self,diff):
+        print ''.join(self.current)
+        self.current[self.selected] = '%d' % ((int(self.current[self.selected]) + diff)%10)
+        print ''.join(self.current)
+        self.screen.combo.SetText(''.join(self.current),(0,0,0,1))
+
+    def SetSelected(self,n):
+        if n < 0:
+            n = 0
+        if n > 3:
+            n = 3
+        self.selected = n
+        self.screen.selected.bottom_left = Point(self.selected*0.25,-0.05)
+        self.screen.selected.top_right = Point((self.selected+1)*0.25,0.15)
+        self.screen.selected.UpdatePosition()
+            
+
+    def KeyUp(self,key):
+        if key == pygame.K_ESCAPE:
+            self.screen.Disable()
+            self.parent.CloseScreen()
+
+        if self.current_key:
+            self.current_key = None
+
+    def Update(self,t):
+        if not self.current_key:
+            return
+        elif self.current_key == pygame.K_TAB:
+            self.current_key = None
+            return
+
 
 class Car(GameObject):
     type = ObjectTypes.CAR
@@ -233,6 +322,7 @@ class Computer(GameObject):
         self.terminal = None
         self.parent = parent
         self.terminal_type = terminal_type
+        self.last_keyrepeat = None
         bl = Point(0,0.45) + (Point(6,6).to_float()/globals.screen)
         tr = Point(1,1) - (Point(6,6).to_float()/globals.screen)
         self.screen = ui.Box(parent = globals.screen_root,
@@ -282,10 +372,6 @@ class Computer(GameObject):
     def Update(self,t):
         self.terminal.Update(t)
         if not self.current_key:
-            return
-        elif self.current_key == pygame.K_TAB:
-            self.terminal.ToggleMode()
-            self.current_key = None
             return
         if self.last_keyrepeat == None:
             self.last_keyrepeat = t+self.initial_key_repeat
@@ -387,6 +473,7 @@ class GameMap(object):
         self.AddObject(Dish(Point(44,38)))
         self.AddObject(Bed(Point(86,21)))
         self.AddObject(Car(Point(73,2)))
+        self.AddObject(Locker(Point(87,26),'2212',self.parent))
         self.AddObject(Computer(Point(94,21),terminal.DomsComputer,self.parent))
 
     def AddObject(self,obj):

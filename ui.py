@@ -362,22 +362,23 @@ class HoverableElement(UIElement):
     
 
 class Box(UIElement):
-    def __init__(self,parent,pos,tr,colour):
+    def __init__(self,parent,pos,tr,colour,extra = 0):
         super(Box,self).__init__(parent,pos,tr)
         self.quad = drawing.Quad(globals.ui_buffer)
         self.colour = colour
         self.unselectable_colour = tuple(component*0.6 for component in self.colour)
         self.quad.SetColour(self.colour)
+        self.extra = extra
         self.quad.SetVertices(self.absolute.bottom_left,
                               self.absolute.top_right,
-                              drawing.constants.DrawLevels.ui)
+                              drawing.constants.DrawLevels.ui+self.extra)
         self.Enable()
 
     def UpdatePosition(self):
         super(Box,self).UpdatePosition()
         self.quad.SetVertices(self.absolute.bottom_left,
                               self.absolute.top_right,
-                              drawing.constants.DrawLevels.ui)
+                              drawing.constants.DrawLevels.ui+self.extra)
 
     def Delete(self):
         super(Box,self).Delete()
@@ -449,6 +450,7 @@ class TextBox(UIElement):
         self.absolute.bottom_left = self.GetAbsoluteInParent(pos)
         self.scale = scale
         self.lowest_y = 0
+
         row_height = (float(self.text_manager.font_height*self.scale*drawing.texture.global_scale)/self.absolute.size.y)
         #Do this without any kerning or padding for now, and see what it looks like
         cursor = Point(self.margin.x,-self.viewpos + 1 - row_height-self.margin.y)
@@ -913,6 +915,7 @@ class TextBoxButton(TextBox):
     def OnClick(self,pos,button):
         if 1 or self.callback != None and button == 1:
             self.callback(pos)
+
 
 class Slider(UIElement):
     def __init__(self,parent,bl,tr,points,callback):
