@@ -393,7 +393,7 @@ class SignalComputer(Emulator):
         self.t = t
         if (self.t - self.last) > self.time_between:
             t = float(self.t)/1000
-            message = 't=%5.2f : signal=%10.7f   ' % (t,AlienSignal(t))
+            message = 't=%6.3f : signal=%11.8f   ' % (t,AlienSignal(t))
             if (self.num_outputted%2) == 1:
                 message += '\n'
             self.num_outputted += 1
