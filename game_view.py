@@ -427,7 +427,33 @@ class WhiteBoard(TileData):
                          TileTypes.QUARTERS_WHITEBOARD : 'quarterswb_full.png'}
     def __init__(self,type,pos):
         super(WhiteBoard,self).__init__(type,pos)
-        
+        try:
+            self.full_name = self.fulltexture_names[type]
+        except KeyError:
+            self.full_name = self.fulltexture_names[TileTypes.GRASS]
+        self.guide = ui.UIElement(parent = globals.screen_root,
+                                  pos = Point(0.2,0.2),
+                                  tr = Point(0.8,0.8))
+        self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.atlas.TextureSpriteCoords(self.full_name))
+        self.quad.SetVertices(self.guide.absolute.bottom_left,self.guide.absolute.top_right,drawing.constants.DrawLevels.ui + 800)
+        self.quad.Disable()
+
+    def Interact(self,player):
+        print 'wb'
+        self.quad.Enable()
+        globals.game_view.computer = self
+
+    def KeyDown(self,key):
+        pass
+
+    def KeyUp(self,key):
+        if key == pygame.K_ESCAPE:
+            self.quad.Disable()
+            globals.game_view.CloseScreen()
+
+    def Update(self,t):
+        return
+
 
 def TileDataFactory(map,type,pos):
     if type in TileTypes.Whiteboards:
