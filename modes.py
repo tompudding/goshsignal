@@ -124,9 +124,12 @@ class GameOver(Mode):
     def Zoom(self,t):
         if globals.zoom_scale == None:
             globals.zoom_scale = 1.0
+            globals.sounds.fadein.play()
         globals.zoom_scale = 1+(10*(float(self.elapsed)/3000))
         if self.elapsed > 3000:
             print 'done zoom'
+            globals.sounds.fadein.stop()
+            globals.sounds.explode.play()
             globals.game_view.computer.screen.Disable()
             globals.game_view.CloseScreen()
             globals.zoom_scale = None
