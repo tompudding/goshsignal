@@ -201,7 +201,8 @@ class Emulator(ui.UIElement):
             self.AddText(self.text_buffer[:100])
             self.text_buffer = self.text_buffer[100:]
             if not self.text_buffer:
-                self.AddKey(ord('$'),True)
+                if not self.current_command:
+                    self.AddKey(ord('$'),True)
                 self.current_buffer = []
             return
         if self.cursor_flash == None:
@@ -294,9 +295,13 @@ class Emulator(ui.UIElement):
 
     def AddKey(self,key,userInput = True,repeat = False):
         if userInput and key == 3:
+            if self.current_command:
+                self.current_command = None
+                self.AddTextBuffer('\n')
+                return
             print 'a'
             self.text_buffer = ''
-            self.AddKey(ord('\n'))
+            self.AddTextBuffer('\n')
         if userInput and not repeat:
             #for sound in globals.sounds.typing_sounds:
             #    sound.stop()
@@ -364,6 +369,7 @@ class BashComputer(Emulator):
                          'file' : self.file,
                          'strings' : self.strings}
         super(BashComputer,self).__init__(parent,gameview,computer,background,foreground)
+        self.current_command = None
         self.file_sigs = {'ae1dbfcbb43c1a38a3c8114283a602487b69fcdf' : 'ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x35087c06ea71d4eff1d8e2536e96213e3bd99761, not stripped',
                           'e6eb713cd887bd0e253414d311cfb6b9f2707c2c' : 'ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0x7f981e03f231371c5feaaeab28d9e23639e57cd3, stripped'}
         self.strings_sigs = {'ae1dbfcbb43c1a38a3c8114283a602487b69fcdf' : """/lib/ld-linux-armhf.so.3
@@ -882,7 +888,11 @@ xstrtoumax
 """}
         self.cwd = Path('/')
     def Dispatch(self,message):
-        self.Handle(message)
+        if self.current_command:
+            output = self.current_command(message,initial = False)
+            self.AddTextBuffer(output)
+        else:
+            self.Handle(message)
         #self.AddKey(ord('$'),True)
 
     def Handle(self,message):
@@ -1044,6 +1054,16 @@ class DomsComputer(BashComputer):
                                       '/bin/ls'             : ('ls',self.ls)})
         super(DomsComputer,self).__init__(*args,**kwargs)
 
-    def edit_diary(self,args):
-        print 'x'
-        return 'hi\n'
+    def edit_diary(self,args,initial = True):
+        if initial:
+            self.current_command = self.edit_diary
+            return "This is my secret diary, enter the password:\n"
+        else:
+            if args == 'morpheus':
+                out = 'correct!\nThe locker combination is 2212\n'
+            else:
+                out = 'Bad password!\n'
+            self.current_command = None
+            return out
+            
+
