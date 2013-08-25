@@ -185,6 +185,7 @@ class GameMode(Mode):
             facing = self.parent.map.player.Facing()
             if not facing:
                 return
+            print facing
             if (facing.x,facing.y) in self.parent.map.object_cache:
                 obj = self.parent.map.object_cache[(facing.x,facing.y)]
                 obj.Interact(self.parent.map.player)

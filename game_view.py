@@ -109,27 +109,30 @@ class Viewpos(object):
                 self.pos = (self.start_point + (self.target_change*partial)).to_int()
 
 class TileTypes:
-    GRASS              = 1
-    WALL               = 2
-    DOOR_CLOSED        = 3
-    DOOR_OPEN          = 4
-    TILE               = 5
-    PLAYER             = 6
-    ROAD               = 7
-    ROAD_MARKING       = 8
-    CHAINLINK          = 9
-    JODRELL_SIGN       = 10
-    BARRIER            = 11
-    ROAD_MARKING_HORIZ = 13
-    WOOD               = 15
-    BATHROOM_TILE      = 16
-    LAB_TILE           = 17
-    DOOR_LOCKED_LAB    = 18
-    DOOR_LOCKED_DISH   = 19
+    GRASS               = 1
+    WALL                = 2
+    DOOR_CLOSED         = 3
+    DOOR_OPEN           = 4
+    TILE                = 5
+    PLAYER              = 6
+    ROAD                = 7
+    ROAD_MARKING        = 8
+    CHAINLINK           = 9
+    JODRELL_SIGN        = 10
+    BARRIER             = 11
+    ROAD_MARKING_HORIZ  = 13
+    WOOD                = 15
+    BATHROOM_TILE       = 16
+    LAB_TILE            = 17
+    DOOR_LOCKED_LAB     = 18
+    DOOR_LOCKED_DISH    = 19
+    LAB_WHITEBOARD      = 20
+    QUARTERS_WHITEBOARD = 21
 
     Doors      = set((DOOR_CLOSED,DOOR_OPEN,DOOR_LOCKED_LAB,DOOR_LOCKED_DISH))
     Computers  = set()
-    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER)) | Computers
+    Whiteboards = set((LAB_WHITEBOARD,QUARTERS_WHITEBOARD))
+    Impassable = set((WALL,DOOR_CLOSED,CHAINLINK,JODRELL_SIGN,BARRIER)) | Computers | Whiteboards
 
 class TileData(object):
     texture_names = {TileTypes.GRASS         : 'grass.png',
@@ -147,6 +150,8 @@ class TileData(object):
                      TileTypes.WOOD          : 'wood.png',
                      TileTypes.BATHROOM_TILE : 'bathroom_tile.png',
                      TileTypes.LAB_TILE      : 'labtile.png',
+                     TileTypes.LAB_WHITEBOARD :  'lab_whiteboard.png',
+                     TileTypes.QUARTERS_WHITEBOARD :  'quarters_whiteboard.png',
                      }
     
     def __init__(self,type,pos):
@@ -417,7 +422,16 @@ class Door(TileData):
                 #play locked sound or what have you
                 print 'locked!'
 
+class WhiteBoard(TileData):
+    texture_names = {TileTypes.LAB_WHITEBOARD : 'labwb_full.png',
+                     TileTypes.QUARTERS_WHITEBOARD : 'quarterswb_full.png'}
+    def __init__(self,type,pos):
+        super(WhiteBoard,self).__init__(type,pos)
+        
+
 def TileDataFactory(map,type,pos):
+    if type in TileTypes.Whiteboards:
+        return WhiteBoard(type,pos)
     if type in TileTypes.Doors:
         return Door(type,pos)
     else:
@@ -440,11 +454,13 @@ class GameMap(object):
                      's' : TileTypes.JODRELL_SIGN,
                      'p' : TileTypes.PLAYER,
                      'w' : TileTypes.WOOD,
+                     'W' : TileTypes.LAB_WHITEBOARD,
+                     '3' : TileTypes.QUARTERS_WHITEBOARD,
                      't' : TileTypes.BATHROOM_TILE,
                      'b' : TileTypes.BARRIER,
                      'l' : TileTypes.LAB_TILE}
     def __init__(self,name,parent):
-        self.size   = Point(124,76)
+        self.size   = Point(89,49)
         self.data   = [[TileTypes.GRASS for i in xrange(self.size.y)] for j in xrange(self.size.x)]
         self.object_cache = {}
         self.object_list = []
@@ -483,11 +499,11 @@ class GameMap(object):
                 if y < 0:
                     break
 
-        self.AddObject(Dish(Point(44,38)))
-        self.AddObject(Bed(Point(86,21)))
-        self.AddObject(Car(Point(73,2)))
-        self.AddObject(Locker(Point(87,26),'2212',self.parent))
-        self.AddObject(Computer(Point(94,21),terminal.DomsComputer,self.parent))
+        self.AddObject(Dish(Point(42,30)))
+        self.AddObject(Bed(Point(62,22)))
+        self.AddObject(Car(Point(55,2)))
+        self.AddObject(Locker(Point(67,23),'2212',self.parent))
+        self.AddObject(Computer(Point(77,18),terminal.DomsComputer,self.parent))
 
     def AddObject(self,obj):
         self.object_list.append(obj)
