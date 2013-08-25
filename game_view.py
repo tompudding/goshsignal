@@ -280,7 +280,7 @@ class Locker(GameObject):
                 self.parent.CloseScreen()
                 if self.current_player:
                     self.current_player.AddItem(actors.LabKey())
-                self.parent.info_box.text.SetText('You received a Labkey',colour=(1,1,0,1))
+                self.parent.SetInfoText('You recieved a LabKey')
                 self.current_player = None
                 
             else:
@@ -418,6 +418,7 @@ class Door(TileData):
         else:
             if any(isinstance(item,self.keytype) for item in player.inventory.items):
                 self.Toggle()
+                globals.game_view.SetInfoText('You used "%s"' % self.keytype.name)
             else:
                 #play locked sound or what have you
                 print 'locked!'
@@ -442,6 +443,7 @@ class WhiteBoard(TileData):
         print 'wb'
         self.quad.Enable()
         globals.game_view.computer = self
+        globals.game_view.SetInfoText('Press ESC to return')
 
     def KeyDown(self,key):
         pass
@@ -450,6 +452,7 @@ class WhiteBoard(TileData):
         if key == pygame.K_ESCAPE:
             self.quad.Disable()
             globals.game_view.CloseScreen()
+            globals.game_view.SetInfoText(' ')
 
     def Update(self,t):
         return
@@ -567,6 +570,9 @@ class GameView(ui.RootElement):
         #self.mode = modes.LevelOne(self)
         super(GameView,self).__init__(Point(0,0),Point(*self.map.world_size))
         #self.StartMusic()
+
+    def SetInfoText(self,text):
+        self.info_box.text.SetText(text,colour=(1,1,0,1))
 
     def StartMusic(self):
         pass
