@@ -520,38 +520,90 @@ class GameMap(object):
         self.doors  = []
         self.player = None
         self.parent = parent
+        self.filedata = """                        c            ccccccccccccccccccccccccccccccc
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c            c                             c
+                        c    +--------d+                           c
+                        c    |.........|                           c
+                        c    |.........|                           c
+                        c    |.........|                           c
+                        c    +----x----+                           c
+                        c            ccccccccccccccccccccccccccccccc
+                        c
+                        c
+                        c          +-------W--+----+         +---3--------+---+ 
+                        c          |..........|....|         |............|ttt| 
+                        c          |l.l.l.l.l.|....|         |............|ttt| 
+                        c          |..........|....|         |............|ttt| 
+                        c          |l.l.l.l.l.|....|         |w...w...w...+-d-+ 
+                        c          |..........|....|         |................| 
+                        c          |l.l.l.l.l.+d+..|         |................| 
+                        c          |............|..|         |................| 
+                        c          |l.l.l.l.l.l.|..|         |w...w...w...w...| 
+                        c          +----------L-+--+         +---d------------+ 
+                        c                                    
+                        crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                        crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                        crrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrrMrrMrrMrrMrrM
+                        crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                        crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                        c                             rrrmrrr
+                        cccccccccccccccccccccccccsccccb     rccccccccccccccccccccccccccccc
+                                               c      rrrmrrr      c
+                                               c      rrrrrrr      c
+                                               c      rrrmrrr      c
+                                               c      rrrrrrr      c
+                                               c      rrrmrrr      c
+                                               c      rrrprrr      c
+                                               c      rrrmrrr      c
+                                               c      rrrrrrr      c
+                                               c      rrrmrrr      c
+                                               c      rrrrrrr      c       
+
+"""
         y = self.size.y - 1
-        with open(name) as f:
-            for line in f:
-                line = line.strip('\n')
-                if len(line) < self.size.x:
-                    line += ' '*(self.size.x - len(line))
-                if len(line) > self.size.x:
-                    line = line[:self.size.x]
-                for inv_x,tile in enumerate(line[::-1]):
-                    x = self.size.x-1-inv_x
-                    #try:
-                    if 1:
-                        td = TileDataFactory(self,self.input_mapping[tile],Point(x,y))
-                        for tile_x in xrange(td.size.x):
-                            for tile_y in xrange(td.size.y):
-                                if self.data[x+tile_x][y+tile_y] != TileTypes.GRASS:
-                                    self.data[x+tile_x][y+tile_y].Delete()
-                                    self.data[x+tile_x][y+tile_y] = TileTypes.GRASS
-                                if self.data[x+tile_x][y+tile_y] == TileTypes.GRASS:
-                                    self.data[x+tile_x][y+tile_y] = td
-                        if self.input_mapping[tile] == TileTypes.PLAYER:
-                            self.player = actors.Player(self,Point(x+0.2,y))
-                            self.actors.append(self.player)
-                        if isinstance(td,Door):
-                            if self.input_mapping[tile] == TileTypes.DOOR_LOCKED_DISH:
-                                parent.dish_door = td
-                            self.doors.append(td)
-                    #except KeyError:
-                    #    raise globals.types.FatalError('Invalid map data')
-                y -= 1
-                if y < 0:
-                    break
+        for line in self.filedata.splitlines():
+            line = line.strip('\n')
+            if len(line) < self.size.x:
+                line += ' '*(self.size.x - len(line))
+            if len(line) > self.size.x:
+                line = line[:self.size.x]
+            for inv_x,tile in enumerate(line[::-1]):
+                x = self.size.x-1-inv_x
+                #try:
+                if 1:
+                    td = TileDataFactory(self,self.input_mapping[tile],Point(x,y))
+                    for tile_x in xrange(td.size.x):
+                        for tile_y in xrange(td.size.y):
+                            if self.data[x+tile_x][y+tile_y] != TileTypes.GRASS:
+                                self.data[x+tile_x][y+tile_y].Delete()
+                                self.data[x+tile_x][y+tile_y] = TileTypes.GRASS
+                            if self.data[x+tile_x][y+tile_y] == TileTypes.GRASS:
+                                self.data[x+tile_x][y+tile_y] = td
+                    if self.input_mapping[tile] == TileTypes.PLAYER:
+                        self.player = actors.Player(self,Point(x+0.2,y))
+                        self.actors.append(self.player)
+                    if isinstance(td,Door):
+                        if self.input_mapping[tile] == TileTypes.DOOR_LOCKED_DISH:
+                            parent.dish_door = td
+                        self.doors.append(td)
+                #except KeyError:
+                #    raise globals.types.FatalError('Invalid map data')
+            y -= 1
+            if y < 0:
+                break
 
         self.AddObject(Dish(Point(42,31)))
         self.AddObject(Bed(Point(62,22)))
