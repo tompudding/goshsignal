@@ -433,8 +433,8 @@ class WhiteBoard(TileData):
         except KeyError:
             self.full_name = self.fulltexture_names[TileTypes.GRASS]
         self.guide = ui.UIElement(parent = globals.screen_root,
-                                  pos = Point(0.2,0.2),
-                                  tr = Point(0.8,0.8))
+                                  pos = Point(0.15,0.15),
+                                  tr = Point(0.85,0.85))
         self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.atlas.TextureSpriteCoords(self.full_name))
         self.quad.SetVertices(self.guide.absolute.bottom_left,self.guide.absolute.top_right,drawing.constants.DrawLevels.ui + 800)
         self.quad.Disable()
