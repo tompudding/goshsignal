@@ -8,7 +8,7 @@ import ui,globals,drawing,os,copy
 from globals.types import Point
 
 class Path(object):
-    def __init__(self,path):
+    def __init__(self,path,keepRelative = False):
         parts = []
         escaped = False
         current = []
@@ -40,7 +40,7 @@ class Path(object):
         parts.append(filename)
         self.parts = []
         for part in parts:
-            if part == '..':
+            if not keepRelative and part == '..':
                 try:
                     self.parts.pop()
                 except IndexError:
@@ -951,7 +951,8 @@ xstrtoumax
             self.cwd = Path(path)
         else:
             try:
-                self.cwd = self.cwd.Extend(Path(path))
+                a = self.cwd.Extend(Path(path,keepRelative = True))
+                self.cwd = a
             except:
                 return 'invalid path\n'
         return '\n'
@@ -964,7 +965,7 @@ xstrtoumax
             path = Path(path)
         else:
             try:
-                path = self.cwd.Extend(Path(path))
+                path = self.cwd.Extend(Path(path,keepRelative = True))
             except:
                 return 'invalid path\n'
         
@@ -1071,14 +1072,50 @@ class DomsComputer(BashComputer):
 class LabComputer(BashComputer):
     Banner = 'Welcome to the Jodrell Bank Lab computer. Please enter your credentials!\nUsername:'
     home_path = Path('/home/lab')
+    users = {'dom'       : ('trinity' , Path('/home/dom')),
+             'admin'     : ('admin'   , Path('/home/admin')),
+             'root'      : ('toor'    , Path('/root')),
+             'drbabbage' : ('cabbage' , Path('/home/drbabbage')),
+             'guest'     : ('password', Path('/home/guest')),
+             'anonymous' : (''        , Path('/home/anonymous'))}
 
     def __init__(self,*args,**kwargs):
         self.FileSystem = FileSystem({'/usr/share'          : (None,None),
                                       '/tmp'                : (None,None),
                                       '/var/log'            : (None,None),
+                                      '/home/dom/'          : (None,None),
+                                      '/home/admin'         : (None,None),
+                                      '/login'              : (None,None),
+                                      '/home/guest'         : (None,None),
+                                      '/home/anonymous'     : (None,None),
+                                      '/home/guest'         : (None,None),
+                                      '/root'               : (None,None),
                                       '/bin/ls'             : ('ls',self.ls)})
         super(LabComputer,self).__init__(*args,**kwargs)
         self.current_command = self.login
+        self.login_username = ''
+        self.login_mode = 0
+        self.cwd = Path('/login')
 
     def login(self,args,initial = True):
-        return 'hi\n'
+        print 'lm',self.login_mode
+        if self.login_mode == 0:
+            #it's a username
+            self.login_username = args
+            if self.login_username not in self.users:
+                return 'Invalid username\nUsername: '
+            self.login_mode = 1
+            return '%s, enter your password: ' % args
+        else:
+            self.login_mode = 0
+            try:
+                password,homedir = self.users[self.login_username]
+            except KeyError:
+                return 'error\n'
+            if args == password:
+                self.current_command = None
+                self.home_path = self.cwd = homedir
+                return 'Welcome %s\n' % self.login_username
+            else:
+                self.login_mode = 0
+                return 'Invalid password\nUsername: '
