@@ -462,7 +462,7 @@ class WhiteBoard(TileData):
         self.quad.Enable()
         globals.game_view.computer = self
         if self.type == TileTypes.LAB_WHITEBOARD:
-            hint = 'Hint: You need to do some maths. You might need a calculator.'
+            hint = 'Hint: You need to do some maths. Please don\'t hate me'
             globals.sounds.PlayVoice(globals.sounds.lab_wb)
         else:
             hint = 'Press ESC to return'
@@ -587,7 +587,7 @@ class GameView(ui.RootElement):
         self.info_box.text = ui.TextBox(self.info_box,
                                         bl = Point(0,0),
                                         tr = Point(1,0.7),
-                                        text = 'Space to interact, I for inventory',
+                                        text = 'Space to interact, I for inventory, DEL to toggle music',
                                         textType = drawing.texture.TextTypes.SCREEN_RELATIVE,
                                         colour = (1,1,0,1),
                                         scale = 3,
