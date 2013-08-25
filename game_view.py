@@ -462,7 +462,7 @@ class WhiteBoard(TileData):
         self.quad.Enable()
         globals.game_view.computer = self
         if self.type == TileTypes.LAB_WHITEBOARD:
-            hint = 'Hint: you might need a calculator'
+            hint = 'Hint: You need to do some maths. You might need a calculator.'
             globals.sounds.PlayVoice(globals.sounds.lab_wb)
         else:
             hint = 'Press ESC to return'
