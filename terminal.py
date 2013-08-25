@@ -1067,3 +1067,18 @@ class DomsComputer(BashComputer):
             return out
             
 
+
+class LabComputer(BashComputer):
+    Banner = 'Welcome to the Jodrell Bank Lab computer. Please enter your credentials!\nUsername:'
+    home_path = Path('/home/lab')
+
+    def __init__(self,*args,**kwargs):
+        self.FileSystem = FileSystem({'/usr/share'          : (None,None),
+                                      '/tmp'                : (None,None),
+                                      '/var/log'            : (None,None),
+                                      '/bin/ls'             : ('ls',self.ls)})
+        super(LabComputer,self).__init__(*args,**kwargs)
+        self.current_command = self.login
+
+    def login(self,args,initial = True):
+        return 'hi\n'

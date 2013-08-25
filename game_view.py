@@ -353,6 +353,7 @@ class Computer(GameObject):
         #else:
         #    self.terminal.Enable()
         self.current_key = None
+        globals.game_view.SetInfoText('Press ESC to return, and CTRL-C to kill running programs')
 
     def Interact(self,player):
         self.screen.Enable()
@@ -532,7 +533,8 @@ class GameMap(object):
         self.AddObject(Bed(Point(62,22)))
         self.AddObject(Car(Point(55,2)))
         self.AddObject(Locker(Point(67,23),'2212',self.parent))
-        self.AddObject(Computer(Point(77,18),terminal.DomsComputer,self.parent))
+        self.AddObject(Computer(Point(75,18),terminal.DomsComputer,self.parent))
+        self.AddObject(Computer(Point(38,23),terminal.LabComputer,self.parent))
 
     def AddObject(self,obj):
         self.object_list.append(obj)
@@ -623,3 +625,4 @@ class GameView(ui.RootElement):
 
     def CloseScreen(self):
         self.computer = None
+        self.SetInfoText(' ')
