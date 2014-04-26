@@ -451,8 +451,11 @@ class WhiteBoard(TileData):
         self.guide = ui.UIElement(parent = globals.screen_root,
                                   pos = Point(0.15,0.15),
                                   tr = Point(0.85,0.85))
+        size = globals.atlas.TextureSubimage(self.full_name).size
         self.quad = drawing.Quad(globals.screen_texture_buffer,tc = globals.atlas.TextureSpriteCoords(self.full_name))
-        self.quad.SetVertices(self.guide.absolute.bottom_left,self.guide.absolute.top_right,drawing.constants.DrawLevels.ui + 800)
+        bl = (globals.screen - size)/2
+        tr = bl + size
+        self.quad.SetVertices(bl,tr,drawing.constants.DrawLevels.ui + 800)
         self.quad.Disable()
 
     def Interact(self,player):
@@ -677,7 +680,7 @@ class GameView(ui.RootElement):
         drawing.DrawAll(globals.nonstatic_text_buffer,globals.text_manager.atlas.texture.texture)
         
     def Update(self,t):
-        #print self.viewpos.pos
+        print self.viewpos.pos
         
         if self.mode:
             self.mode.Update(t)
