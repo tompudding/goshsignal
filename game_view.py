@@ -54,7 +54,7 @@ class Viewpos(object):
         self.follow_locked = False
 
     def HasTarget(self):
-        return self.target != None
+        return self.target is not None
 
     def Get(self):
         return self.pos
@@ -83,7 +83,7 @@ class Viewpos(object):
             diff = target - self.pos
             #print diff.SquareLength(),self.follow_threshold
             direction = diff.direction()
-            
+
             if abs(diff.x) < self.max_away.x and abs(diff.y) < self.max_away.y:
                 adjust = diff*0.02
             else:
@@ -93,7 +93,7 @@ class Viewpos(object):
                 adjust = direction
             self.pos += adjust
             return
-                
+
         elif self.target:
             if t >= self.target_time:
                 self.pos = self.target
@@ -153,7 +153,7 @@ class TileData(object):
                      TileTypes.LAB_WHITEBOARD :  'lab_whiteboard.png',
                      TileTypes.QUARTERS_WHITEBOARD :  'quarters_whiteboard.png',
                      }
-    
+
     def __init__(self,type,pos):
         self.pos  = pos
         self.type = type
@@ -226,7 +226,7 @@ class Bed(GameObject):
         else:
             self.type = ObjectTypes.BED_DOWN
         super(Bed,self).__init__(pos)
-        
+
     def Interact(self,player):
         globals.sounds.PlayVoice(self.sound)
 
@@ -272,13 +272,13 @@ class Locker(GameObject):
         self.current_key = key
         if key == pygame.K_TAB:
             return
-        elif key == pygame.K_RIGHT:
+        elif key in set((pygame.K_RIGHT, pygame.K_d)):
             self.SetSelected(self.selected + 1)
-        elif key == pygame.K_LEFT:
+        elif key in set((pygame.K_LEFT, pygame.K_a)):
             self.SetSelected(self.selected - 1)
-        elif key == pygame.K_UP:
+        elif key in set((pygame.K_UP, pygame.K_w)):
             self.AdjustSelected(1)
-        elif key == pygame.K_DOWN:
+        elif key in set((pygame.K_DOWN, pygame.K_s)):
             self.AdjustSelected(-1)
         elif key == pygame.K_RETURN:
             if self.current == self.combination:
@@ -290,11 +290,11 @@ class Locker(GameObject):
                     globals.sounds.PlayVoice(globals.sounds.getkey)
                 self.parent.SetInfoText('You recieved a LabKey')
                 self.current_player = None
-                
+
             else:
                 print 'incorrect!'
 
-        
+
     def AdjustSelected(self,diff):
         print ''.join(self.current)
         self.current[self.selected] = '%d' % ((int(self.current[self.selected]) + diff)%10)
@@ -353,7 +353,7 @@ class Computer(GameObject):
 
     def SetScreen(self):
         #globals.sounds.terminal_on.play()
-        if self.terminal == None:
+        if self.terminal is None:
             self.terminal = self.terminal_type(parent     = self.screen,
                                                gameview   = self.parent,
                                                computer   = self,
@@ -395,7 +395,7 @@ class Computer(GameObject):
         self.terminal.Update(t)
         if not self.current_key:
             return
-        if self.last_keyrepeat == None:
+        if self.last_keyrepeat is None:
             self.last_keyrepeat = t+self.initial_key_repeat
             return
         if t - self.last_keyrepeat > self.key_repeat_time:
@@ -415,7 +415,7 @@ class Door(TileData):
         else:
             self.locked = False
         super(Door,self).__init__(type,pos)
-        
+
     def Toggle(self):
         if self.type == TileTypes.DOOR_CLOSED:
             self.type = TileTypes.DOOR_OPEN
@@ -546,17 +546,17 @@ class GameMap(object):
                         c            ccccccccccccccccccccccccccccccc
                         c
                         c
-                        c          +-------W--+----+         +---3--------+---+ 
-                        c          |..........|....|         |............|ttt| 
-                        c          |l.l.l.l.l.|....|         |............|ttt| 
-                        c          |..........|....|         |............|ttt| 
-                        c          |l.l.l.l.l.|....|         |w...w...w...+-d-+ 
-                        c          |..........|....|         |................| 
-                        c          |l.l.l.l.l.+d+..|         |................| 
-                        c          |............|..|         |................| 
-                        c          |l.l.l.l.l.l.|..|         |w...w...w...w...| 
-                        c          +----------L-+--+         +---d------------+ 
-                        c                                    
+                        c          +-------W--+----+         +---3--------+---+
+                        c          |..........|....|         |............|ttt|
+                        c          |l.l.l.l.l.|....|         |............|ttt|
+                        c          |..........|....|         |............|ttt|
+                        c          |l.l.l.l.l.|....|         |w...w...w...+-d-+
+                        c          |..........|....|         |................|
+                        c          |l.l.l.l.l.+d+..|         |................|
+                        c          |............|..|         |................|
+                        c          |l.l.l.l.l.l.|..|         |w...w...w...w...|
+                        c          +----------L-+--+         +---d------------+
+                        c
                         crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
                         crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
                         crrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrMrrrMrrMrrMrrMrrM
@@ -573,7 +573,7 @@ class GameMap(object):
                                                c      rrrmrrr      c
                                                c      rrrrrrr      c
                                                c      rrrmrrr      c
-                                               c      rrrrrrr      c       
+                                               c      rrrrrrr      c
 
 """
         y = self.size.y - 1
@@ -632,7 +632,7 @@ class GameView(ui.RootElement):
         self.map = GameMap('level1.txt',self)
         self.map.world_size = self.map.size * globals.tile_dimensions
         self.viewpos = Viewpos(Point(915,0))
-        self.player_direction = Point(0,0)   
+        self.player_direction = Point(0,0)
         self.game_over = False
         self.computer = None
         self.info_box = ui.Box(parent = globals.screen_root,
@@ -667,7 +667,7 @@ class GameView(ui.RootElement):
             self.dish_door.Toggle()
 
     def StartMusic(self):
-        pygame.mixer.music.load('music.ogg')
+        pygame.mixer.music.load(globals.pyinst.path('music.ogg'))
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
         self.music_playing = True
@@ -678,10 +678,10 @@ class GameView(ui.RootElement):
         drawing.Translate(-self.viewpos.pos.x,-self.viewpos.pos.y,0)
         drawing.DrawAll(globals.quad_buffer,self.atlas.texture.texture)
         drawing.DrawAll(globals.nonstatic_text_buffer,globals.text_manager.atlas.texture.texture)
-        
+
     def Update(self,t):
-        print self.viewpos.pos
-        
+        #print self.viewpos.pos
+
         if self.mode:
             self.mode.Update(t)
 
@@ -690,7 +690,7 @@ class GameView(ui.RootElement):
 
         if self.computer:
             return self.computer.Update(t)
-            
+
         self.t = t
         self.viewpos.Update(t)
         if self.viewpos.pos.x < 0:
@@ -707,7 +707,7 @@ class GameView(ui.RootElement):
     def GameOver(self):
         self.game_over = True
         self.mode = modes.GameOver(self)
-        
+
     def KeyDown(self,key):
         self.mode.KeyDown(key)
 

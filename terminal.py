@@ -36,7 +36,7 @@ class Path(object):
             except IndexError:
                 #It's the root dir
                 filename = '/'
-        
+
         self.filename = filename
         parts.append(filename)
         self.parts = []
@@ -111,10 +111,10 @@ class NoSuchFile(FileSystemException):
 class FileSystem(object):
     def __init__(self,files):
         self.root = Directory(Path('/'))
-        
+
         for path,(filename,handler) in files.iteritems():
-            if filename != None:
-                with open(filename,'rb') as f:
+            if filename is not None:
+                with open(globals.pyinst.path(filename),'rb') as f:
                     data = f.read()
             else:
                 data = None
@@ -132,7 +132,7 @@ class FileSystem(object):
                 current_dir = f
             if bad:
                 continue
-            if data == None:
+            if data is None:
                 new_file = Directory(path)
             else:
                 new_file = File(path,data,handler)
@@ -169,10 +169,10 @@ class Emulator(ui.UIElement):
         self.computer = computer
         self.text_buffer = ''
         self.last = 0
-        
+
         self.size = (self.absolute.size/(globals.text_manager.GetSize(' ',self.scale).to_float())).to_int()
         self.quads = []
-        
+
         for x in xrange(self.size.x):
             col = []
             for y in xrange(self.size.y):
@@ -185,10 +185,10 @@ class Emulator(ui.UIElement):
         self.cursor_flash = None
         self.cursor_flash_state = False
         self.current_buffer = []
-            
+
         self.cursor = Point(0,0)
         self.start = None
-        
+
         self.AddMessage(self.GetBanner())
 
     def GetBanner(self):
@@ -213,7 +213,7 @@ class Emulator(ui.UIElement):
                     self.AddKey(ord('$'),True)
                 self.current_buffer = []
             return
-        if self.cursor_flash == None:
+        if self.cursor_flash is None:
             self.cursor_flash = t
             return
         if t - self.cursor_flash > self.cursor_interval:
@@ -285,7 +285,7 @@ class Emulator(ui.UIElement):
         for x in xrange(self.size.x):
             for y in xrange(self.size.y):
                 self.saved_buffer.append(self.quads[x][y].letter)
-        
+
     def RestoreEntryBuffer(self):
         pos = 0
         for x in xrange(self.size.x):
@@ -378,8 +378,8 @@ def AlienSignal(t):
     char = ord('type import universe'[int((t%10)*2)])
     p = (t*math.pi)/10
     signal_level = math.sin(p)*math.cos(3*p)
-    return signal_level*((float(char*2)/256)-1) 
- 
+    return signal_level*((float(char*2)/256)-1)
+
 
 class SignalComputer(Emulator):
     Banner = ''
@@ -388,7 +388,7 @@ class SignalComputer(Emulator):
         super(SignalComputer,self).__init__(*args,**kwargs)
         self.num_outputted = 0
     def Update(self,t):
-        if self.start == None:
+        if self.start is None:
             self.start = t
         self.t = t
         if (self.t - self.last) > self.time_between:
@@ -408,7 +408,7 @@ class SignalComputer(Emulator):
         #print self.t,self.start
 
     def StartMusic(self):
-        pygame.mixer.music.load('beeps.ogg')
+        pygame.mixer.music.load(globals.pyinst.path('beeps.ogg'))
         pygame.mixer.music.set_volume(1.0)
         pygame.mixer.music.play(-1)
 
@@ -432,7 +432,7 @@ class SignalComputer(Emulator):
         if userInput:
             return
         super(SignalComputer,self).AddKey(key,userInput,repeat)
-    
+
 
 class BashComputer(Emulator):
     def __init__(self,parent,gameview,computer,background,foreground):
@@ -639,12 +639,12 @@ main
 sort_type != sort_version
 ls.c
  %lu
-%*lu 
+%*lu
 target
-%*s 
-%s %*s 
-%*s, %*s 
- -> 
+%*s
+%s %*s
+%*s, %*s
+ ->
 cannot access %s
 unlabeled
 cannot read symbolic link %s
@@ -794,7 +794,7 @@ invalid time style format %s
 time style
 %Y-%m-%d %H:%M:%S.%N %z
 %Y-%m-%d %H:%M
-%Y-%m-%d 
+%Y-%m-%d
 %m-%d %H:%M
 error initializing month strings
 LS_COLORS
@@ -995,7 +995,7 @@ xstrtoumax
     def ls(self,args):
         #ignore any switched
         args = [arg for arg in args if arg[0] != '-']
-        
+
         if len(args) == 0:
             path = self.cwd
         else:
@@ -1039,7 +1039,7 @@ xstrtoumax
 
     def pwd(self,args):
         return self.cwd.format() + '\n'
-                        
+
     def GetFileData(self,path):
         if path[0] == '/':
             path = Path(path)
@@ -1048,7 +1048,7 @@ xstrtoumax
                 path = self.cwd.Extend(Path(path,keepRelative = True))
             except:
                 return 'invalid path\n'
-        
+
         try:
             file = self.FileSystem.GetFile(path)
         except InvalidPath:
@@ -1114,7 +1114,7 @@ xstrtoumax
             return 'Insufficient signal strength. Opening dish control...\n'
         return 'import: bad command\n'
 
-        
+
 class DomsComputer(BashComputer):
     Banner = 'This is Dom\'s private diary computer : keep your nose out!\n$'
     home_path = Path('/home/dom')
@@ -1138,7 +1138,7 @@ class DomsComputer(BashComputer):
                 out = 'Bad password!\n'
             self.current_command = None
             return out
-            
+
 
 
 class LabComputer(BashComputer):
@@ -1193,7 +1193,7 @@ class LabComputer(BashComputer):
             else:
                 self.login_mode = 0
                 return 'Invalid password\nUsername: '
-            
+
     def analysis(self,args,initial = True):
         return 'analyse!\n'
 
@@ -1211,7 +1211,7 @@ class FinalComputer(BashComputer):
         super(FinalComputer,self).__init__(*args,**kwargs)
 
     def StartMusic(self):
-        pygame.mixer.music.load('beeps.ogg')
+        pygame.mixer.music.load(globals.pyinst.path('beeps.ogg'))
         pygame.mixer.music.play(-1)
 
     def StopMusic(self):

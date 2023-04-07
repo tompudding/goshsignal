@@ -9,10 +9,10 @@ class Mode(object):
     """ Abstract base class to represent game modes """
     def __init__(self,parent):
         self.parent = parent
-    
+
     def KeyDown(self,key):
         pass
-    
+
     def KeyUp(self,key):
         pass
 
@@ -59,7 +59,7 @@ class Titles(Mode):
     def KeyDown(self,key):
         self.stage = TitleStages.COMPLETE
 
-    def Update(self,t):        
+    def Update(self,t):
         self.elapsed = t - self.start
         self.stage = self.handlers[self.stage](t)
         if self.stage == TitleStages.COMPLETE:
@@ -90,7 +90,7 @@ class GameOver(Mode):
                                       pos    = Point(0,0),
                                       tr     = Point(1,1),
                                       colour = (0,0,0,1))
-        
+
         bl = Point(0,0)
         tr = Point(1,0.7)
         self.blurb_text = ui.TextBox(parent = globals.screen_root,
@@ -111,7 +111,7 @@ class GameOver(Mode):
         #pygame.mixer.music.play(-1)
 
     def Update(self,t):
-        if self.start == None:
+        if self.start is None:
             self.start = t
         self.elapsed = t - self.start
         self.stage = self.handlers[self.stage](t)
@@ -122,7 +122,7 @@ class GameOver(Mode):
         return self.stage
 
     def Zoom(self,t):
-        if globals.zoom_scale == None:
+        if globals.zoom_scale is None:
             globals.zoom_scale = 1.0
             globals.sounds.fadein.play()
         globals.zoom_scale = 1+(10*(float(self.elapsed)/3000))
@@ -167,10 +167,6 @@ class GameOver(Mode):
 
 class GameMode(Mode):
     speed = 8
-    direction_amounts = {pygame.K_LEFT  : Point(-0.01*speed, 0.00),
-                         pygame.K_RIGHT : Point( 0.01*speed, 0.00),
-                         pygame.K_UP    : Point( 0.00, 0.01*speed),
-                         pygame.K_DOWN  : Point( 0.00,-0.01*speed)}
     class KeyFlags:
         LEFT  = 1
         RIGHT = 2
@@ -180,11 +176,24 @@ class GameMode(Mode):
                 pygame.K_RIGHT : KeyFlags.RIGHT,
                 pygame.K_UP    : KeyFlags.UP,
                 pygame.K_DOWN  : KeyFlags.DOWN}
+    direction_amounts = {pygame.K_LEFT  : Point(-0.01*speed, 0.00),
+                         pygame.K_RIGHT : Point( 0.01*speed, 0.00),
+                         pygame.K_UP    : Point( 0.00, 0.01*speed),
+                         pygame.K_DOWN  : Point( 0.00,-0.01*speed)}
+
     """This is a bit of a cheat class as I'm rushed. Just pass everything back"""
     def __init__(self,parent):
         self.parent            = parent
         self.parent.info_box.Enable()
         self.keydownmap = 0
+
+        # Allow WASD
+        for old, new in ((pygame.K_UP, pygame.K_w),
+                         (pygame.K_DOWN, pygame.K_s),
+                         (pygame.K_LEFT, pygame.K_a),
+                         (pygame.K_RIGHT, pygame.K_d),):
+            self.direction_amounts[new] = self.direction_amounts[old]
+            self.keyflags[new] = self.keyflags[old]
 
     def KeyDown(self,key):
         if self.parent.computer:
@@ -217,5 +226,3 @@ class GameMode(Mode):
             tile.Interact(self.parent.map.player)
         elif key == pygame.K_i:
             self.parent.map.player.inventory.SetScreen()
-
-                

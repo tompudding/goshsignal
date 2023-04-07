@@ -98,7 +98,7 @@ class Actor(object):
         bl = bl.to_int()
         tr = tr.to_int()
         self.quad.SetVertices(bl,tr,4)
-    
+
     def Facing(self):
         facing = self.pos + (self.size/2) + self.dirs_pos[self.dir]
         #if we're in the tile, we're not facing it
@@ -119,7 +119,7 @@ class Actor(object):
             dir = Directions.UP
         elif amount.y < 0:
             dir = Directions.DOWN
-        if dir != None and dir != self.dir:
+        if dir is not None and dir != self.dir:
             self.dir = dir
             self.quad.SetTextureCoordinates(self.dirs[self.dir])
         #check each of our four corners
@@ -135,7 +135,7 @@ class Actor(object):
             target_tile_x = self.map.data[int(target_x)][int(pos.y)]
             if target_tile_x.type in game_view.TileTypes.Impassable:
                 amount.x = 0
-                
+
             elif (int(target_x),int(pos.y)) in self.map.object_cache:
                 obj = self.map.object_cache[int(target_x),int(pos.y)]
                 if obj.Contains(Point(target_x,pos.y)):
@@ -155,7 +155,7 @@ class Actor(object):
                 obj = self.map.object_cache[int(pos.x),int(target_y)]
                 if obj.Contains(Point(pos.x,target_y)):
                     amount.y = 0
-            
+
 
         self.SetPos(self.pos + amount)
 
@@ -257,20 +257,20 @@ class Inventory(object):
         self.current_key = key
         if key == pygame.K_TAB:
             return
-        elif key == pygame.K_RIGHT:
+        elif key in set((pygame.K_RIGHT, pygame.K_d)):
             #do this in the same row
             row_pos = self.selected%self.width
             if row_pos+1 < self.width:
                 self.SetSelected(self.selected + 1)
-        elif key == pygame.K_LEFT:
+        elif key in set((pygame.K_LEFT, pygame.K_a)):
             row_pos = self.selected%self.width
             if row_pos != 0:
                 self.SetSelected(self.selected - 1)
-        elif key == pygame.K_UP:
+        elif key in set((pygame.K_UP, pygame.K_w)):
             col_pos = self.height-1-(self.selected/self.width)
             if col_pos + 1 < self.height:
                 self.SetSelected(self.selected - self.width)
-        elif key == pygame.K_DOWN:
+        elif key in set((pygame.K_DOWN, pygame.K_s)):
             col_pos = self.height-1-(self.selected/self.width)
             if col_pos != 0:
                 self.SetSelected(self.selected + self.width)
@@ -278,7 +278,7 @@ class Inventory(object):
             item = self.items[self.selected]
             if item:
                 item.Describe()
-        
+
     def AdjustSelected(self,diff):
         print ''.join(self.current)
         self.current[self.selected] = '%d' % ((int(self.current[self.selected]) + diff)%10)

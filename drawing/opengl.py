@@ -29,7 +29,7 @@ def Init(w,h):
 
 def ResetState():
     glLoadIdentity()
-    if globals.zoom_scale != None:
+    if globals.zoom_scale is not None:
         #print globals.zoom_scale
         Scale(globals.zoom_scale,globals.zoom_scale,1)
 

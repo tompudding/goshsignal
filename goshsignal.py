@@ -6,6 +6,7 @@ import game_view
 import sounds
 from globals.types import Point
 
+
 def Init():
     """Initialise everything. Run once on startup"""
     w,h = (1280,720)
@@ -50,7 +51,7 @@ def main():
         if t - last > 1000:
             #print 'FPS:',clock.get_fps()
             last = t
-        
+
         #globals.current_time = t
 
         globals.current_view.Update(t)
@@ -94,7 +95,7 @@ def main():
                             break
                         if handled:
                             break
-                    
+
                 elif (event.type == pygame.MOUSEBUTTONUP):
                     for layer in globals.screen_root,globals.current_view:
                         handled,dragging = layer.MouseButtonUp(pos,event.button)
